@@ -82,11 +82,34 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
 
     @Override
     public void delete(Integer id) throws DataAccessException {
-        String sql = "DELETE FROM `Order` WHERE id = ?";
+        String deleteOrderLinesSql = "DELETE FROM OrderLine WHERE `order` = ?";
+        String deletePaymentsSql = "DELETE FROM Payment WHERE `order` = ?";
+        String deleteOrderSql = "DELETE FROM `Order` WHERE id = ?";
 
-        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-            statement.setInt(1, id);
-            statement.executeUpdate();
+        try {
+            getConnection().setAutoCommit(false);
+
+            try (PreparedStatement deleteOrderLinesStatement = getConnection().prepareStatement(deleteOrderLinesSql);
+                 PreparedStatement deletePaymentsStatement = getConnection().prepareStatement(deletePaymentsSql);
+                 PreparedStatement deleteOrderStatement = getConnection().prepareStatement(deleteOrderSql)) {
+
+                deleteOrderLinesStatement.setInt(1, id);
+                deleteOrderLinesStatement.executeUpdate();
+
+                deletePaymentsStatement.setInt(1, id);
+                deletePaymentsStatement.executeUpdate();
+
+                deleteOrderStatement.setInt(1, id);
+                deleteOrderStatement.executeUpdate();
+
+                getConnection().commit();
+            } catch (SQLException e) {
+                getConnection().rollback();
+                throw new DataAccessException("Error while deleting order.", e);
+            } finally {
+                getConnection().setAutoCommit(true);
+            }
+
         } catch (SQLException e) {
             throw new DataAccessException("Error while deleting order.", e);
         }
