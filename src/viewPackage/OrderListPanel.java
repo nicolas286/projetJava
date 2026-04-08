@@ -41,10 +41,17 @@ public class OrderListPanel extends JPanel {
         ordersTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(ordersTable);
 
+        JButton addButton = new JButton("Add Order");
+        JButton takeOrderButton = new JButton("Take Order");
         JButton backButton = new JButton("Back to Home");
+
+        addButton.addActionListener(e -> openAddDialog());
+        takeOrderButton.addActionListener(e -> openTakeOrderDialog());
         backButton.addActionListener(e -> parentFrame.showHomeView());
 
         JPanel southPanel = new JPanel();
+        southPanel.add(addButton);
+        southPanel.add(takeOrderButton);
         southPanel.add(backButton);
 
         add(titleLabel, BorderLayout.NORTH);
@@ -75,6 +82,24 @@ public class OrderListPanel extends JPanel {
                     "Error",
                     JOptionPane.ERROR_MESSAGE
             );
+        }
+    }
+
+    private void openAddDialog() {
+        OrderFormDialog dialog = new OrderFormDialog(parentFrame, orderController);
+        dialog.setVisible(true);
+
+        if (dialog.isSaved()) {
+            loadOrders();
+        }
+    }
+
+    private void openTakeOrderDialog() {
+        TakeOrderDialog dialog = new TakeOrderDialog(parentFrame);
+        dialog.setVisible(true);
+
+        if (dialog.isSaved()) {
+            loadOrders();
         }
     }
 }

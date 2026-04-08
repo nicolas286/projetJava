@@ -22,4 +22,16 @@ public class OrderController {
     public Order getOrderById(int id) throws BusinessException {
         return orderManager.getOrderById(id);
     }
+
+    public void addOrder(Order order) throws BusinessException {
+        orderManager.addOrder(order);
+    }
+
+    public void updateOrder(Order order) throws BusinessException {
+        orderManager.updateOrder(order);
+    }
+
+    public void deleteOrder(int id) throws BusinessException {
+        orderManager.deleteOrder(id);
+    }
 }
