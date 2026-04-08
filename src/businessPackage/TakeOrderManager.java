@@ -35,10 +35,7 @@ public class TakeOrderManager {
         }
     }
 
-    public void takeOrder(int orderId, int tableId, List<TakeOrderLine> lines) throws BusinessException {
-        if (orderId <= 0) {
-            throw new BusinessException("Order id must be positive.");
-        }
+    public void takeOrder(int tableId, List<TakeOrderLine> lines) throws BusinessException {
 
         if (tableId <= 0) {
             throw new BusinessException("Table id must be positive.");
@@ -49,13 +46,8 @@ public class TakeOrderManager {
         }
 
         try {
-            Order existingOrder = orderDataAccess.getOrderById(orderId);
-            if (existingOrder != null) {
-                throw new BusinessException("An order with this id already exists.");
-            }
-
             Order order = new Order(
-                    orderId,
+                    0,
                     LocalDateTime.now(),
                     null,
                     null,
@@ -65,15 +57,10 @@ public class TakeOrderManager {
 
             orderDataAccess.insert(order);
 
+            int orderId = order.getId();
+
             int lineNumber = 1;
             for (TakeOrderLine takeOrderLine : lines) {
-                if (takeOrderLine.getProduct() == null) {
-                    throw new BusinessException("A selected product is missing.");
-                }
-
-                if (takeOrderLine.getQuantity() <= 0) {
-                    throw new BusinessException("Quantity must be positive.");
-                }
 
                 Product product = takeOrderLine.getProduct();
 

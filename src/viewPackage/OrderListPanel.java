@@ -43,15 +43,18 @@ public class OrderListPanel extends JPanel {
 
         JButton addButton = new JButton("Add Order");
         JButton takeOrderButton = new JButton("Take Order");
+        JButton viewLinesButton = new JButton("View Selected Order Lines");
         JButton backButton = new JButton("Back to Home");
 
         addButton.addActionListener(e -> openAddDialog());
         takeOrderButton.addActionListener(e -> openTakeOrderDialog());
+        viewLinesButton.addActionListener(e -> openSelectedOrderLines());
         backButton.addActionListener(e -> parentFrame.showHomeView());
 
         JPanel southPanel = new JPanel();
         southPanel.add(addButton);
         southPanel.add(takeOrderButton);
+        southPanel.add(viewLinesButton);
         southPanel.add(backButton);
 
         add(titleLabel, BorderLayout.NORTH);
@@ -101,5 +104,24 @@ public class OrderListPanel extends JPanel {
         if (dialog.isSaved()) {
             loadOrders();
         }
+    }
+
+    private void openSelectedOrderLines() {
+        int selectedRow = ordersTable.getSelectedRow();
+
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please select an order first.",
+                    "Information",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+
+        int orderId = (Integer) tableModel.getValueAt(selectedRow, 0);
+
+        OrderLinesDialog dialog = new OrderLinesDialog(parentFrame, orderId);
+        dialog.setVisible(true);
     }
 }

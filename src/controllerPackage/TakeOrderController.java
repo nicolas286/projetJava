@@ -26,7 +26,7 @@ public class TakeOrderController {
         return takeOrderManager.getAvailableProducts();
     }
 
-    public void takeOrder(int orderId, int tableId, List<TakeOrderLine> lines) throws BusinessException {
-        takeOrderManager.takeOrder(orderId, tableId, lines);
+    public void takeOrder(int tableId, List<TakeOrderLine> lines) throws BusinessException {
+        takeOrderManager.takeOrder(tableId, lines);
     }
 }

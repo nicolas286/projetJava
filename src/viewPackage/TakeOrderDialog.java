@@ -1,8 +1,10 @@
 package viewPackage;
 
+import controllerPackage.TableController;
 import controllerPackage.TakeOrderController;
 import exceptionPackage.BusinessException;
 import modelPackage.Product;
+import modelPackage.RestaurantTable;
 import modelPackage.TakeOrderLine;
 
 import javax.swing.*;
@@ -14,10 +16,10 @@ import java.util.List;
 public class TakeOrderDialog extends JDialog {
 
     private final TakeOrderController takeOrderController;
+    private final TableController tableController;
     private boolean saved;
 
-    private JTextField orderIdField;
-    private JTextField tableIdField;
+    private JComboBox<RestaurantTable> tableComboBox;
     private JComboBox<Product> productComboBox;
     private JSpinner quantitySpinner;
 
@@ -29,10 +31,12 @@ public class TakeOrderDialog extends JDialog {
     public TakeOrderDialog(JFrame parent) {
         super(parent, "Take Order", true);
         this.takeOrderController = new TakeOrderController();
+        this.tableController = new TableController();
         this.saved = false;
         this.lines = new ArrayList<>();
 
         buildInterface();
+        loadTables();
         loadProducts();
     }
 
@@ -44,15 +48,13 @@ public class TakeOrderDialog extends JDialog {
         JPanel formPanel = new JPanel(new GridLayout(2, 4, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        orderIdField = new JTextField();
-        tableIdField = new JTextField();
+        tableComboBox = new JComboBox<>();
         productComboBox = new JComboBox<>();
         quantitySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
 
         formPanel.add(new JLabel("Order Id:"));
-        formPanel.add(orderIdField);
-        formPanel.add(new JLabel("Table Id:"));
-        formPanel.add(tableIdField);
+        formPanel.add(new JLabel("Table:"));
+        formPanel.add(tableComboBox);
 
         formPanel.add(new JLabel("Product:"));
         formPanel.add(productComboBox);
@@ -89,6 +91,29 @@ public class TakeOrderDialog extends JDialog {
         add(formPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    private void loadTables() {
+        try {
+            List<RestaurantTable> tables = tableController.getAllTables();
+            DefaultComboBoxModel<RestaurantTable> comboBoxModel = new DefaultComboBoxModel<>();
+
+            for (RestaurantTable table : tables) {
+                if (table.isActive()) {
+                    comboBoxModel.addElement(table);
+                }
+            }
+
+            tableComboBox.setModel(comboBoxModel);
+
+        } catch (BusinessException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 
     private void loadProducts() {
@@ -143,10 +168,19 @@ public class TakeOrderDialog extends JDialog {
 
     private void confirmOrder() {
         try {
-            int orderId = Integer.parseInt(orderIdField.getText().trim());
-            int tableId = Integer.parseInt(tableIdField.getText().trim());
+            RestaurantTable selectedTable = (RestaurantTable) tableComboBox.getSelectedItem();
 
-            takeOrderController.takeOrder(orderId, tableId, lines);
+            if (selectedTable == null) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Please select a table.",
+                        "Validation error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            takeOrderController.takeOrder(selectedTable.getId(), lines);
 
             saved = true;
             JOptionPane.showMessageDialog(
@@ -167,7 +201,7 @@ public class TakeOrderDialog extends JDialog {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(
                     this,
-                    "Order id and table id must be valid integers.",
+                    "Order id must be a valid integer.",
                     "Validation error",
                     JOptionPane.ERROR_MESSAGE
             );

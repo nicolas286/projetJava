@@ -81,24 +81,23 @@ CREATE TABLE Storage (
 );
 
 CREATE TABLE `Order` (
-    id INT(8) NOT NULL,
-    dateOrdered DATETIME NOT NULL,
-    dateCompleted DATETIME NULL,
-    status ENUM('ORDERED', 'IN_PREPARATION', 'READY', 'DELIVERED', 'CANCELLED') NOT NULL,
-    `table` INT(4) NOT NULL,
-    dateDelivered DATETIME NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_order_table FOREIGN KEY (`table`) REFERENCES `Table`(id),
-    CONSTRAINT chk_order_id_positive CHECK (id > 0),
-    CONSTRAINT chk_order_completed_after_ordered CHECK (
-        dateCompleted IS NULL OR dateCompleted >= dateOrdered
-    ),
-    CONSTRAINT chk_order_delivered_after_ordered CHECK (
-        dateDelivered IS NULL OR dateDelivered >= dateOrdered
-    ),
-    CONSTRAINT chk_order_delivered_after_completed CHECK (
-        dateCompleted IS NULL OR dateDelivered IS NULL OR dateDelivered >= dateCompleted
-    )
+     id INT(8) NOT NULL AUTO_INCREMENT,
+     dateOrdered DATETIME NOT NULL,
+     dateCompleted DATETIME NULL,
+     status ENUM('ORDERED', 'IN_PREPARATION', 'READY', 'DELIVERED', 'CANCELLED') NOT NULL,
+     `table` INT(4) NOT NULL,
+     dateDelivered DATETIME NULL,
+     PRIMARY KEY (id),
+     CONSTRAINT fk_order_table FOREIGN KEY (`table`) REFERENCES `Table`(id),
+     CONSTRAINT chk_order_completed_after_ordered CHECK (
+         dateCompleted IS NULL OR dateCompleted >= dateOrdered
+         ),
+     CONSTRAINT chk_order_delivered_after_ordered CHECK (
+         dateDelivered IS NULL OR dateDelivered >= dateOrdered
+         ),
+     CONSTRAINT chk_order_delivered_after_completed CHECK (
+         dateCompleted IS NULL OR dateDelivered IS NULL OR dateDelivered >= dateCompleted
+         )
 );
 
 CREATE TABLE Payment (

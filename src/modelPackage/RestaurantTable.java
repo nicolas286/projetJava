@@ -82,4 +82,9 @@ public class RestaurantTable {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    @Override
+    public String toString() {
+        return "Table " + id + " (" + capacity + " seats)";
+    }
 }

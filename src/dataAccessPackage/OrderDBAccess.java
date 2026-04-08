@@ -15,28 +15,35 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
 
     @Override
     public void insert(Order order) throws DataAccessException {
-        String sql = "INSERT INTO `Order` (id, dateOrdered, dateCompleted, status, `table`, dateDelivered) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO `Order` (dateOrdered, dateCompleted, status, `table`, dateDelivered) VALUES (?, ?, ?, ?, ?)";
 
-        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
-            statement.setInt(1, order.getId());
-            statement.setTimestamp(2, Timestamp.valueOf(order.getDateOrdered()));
+        try (PreparedStatement statement = getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            statement.setTimestamp(1, Timestamp.valueOf(order.getDateOrdered()));
 
             if (order.getDateCompleted() != null) {
-                statement.setTimestamp(3, Timestamp.valueOf(order.getDateCompleted()));
+                statement.setTimestamp(2, Timestamp.valueOf(order.getDateCompleted()));
             } else {
-                statement.setTimestamp(3, null);
+                statement.setTimestamp(2, null);
             }
 
-            statement.setString(4, order.getStatus());
-            statement.setInt(5, order.getTableId());
+            statement.setString(3, order.getStatus());
+            statement.setInt(4, order.getTableId());
 
             if (order.getDateDelivered() != null) {
-                statement.setTimestamp(6, Timestamp.valueOf(order.getDateDelivered()));
+                statement.setTimestamp(5, Timestamp.valueOf(order.getDateDelivered()));
             } else {
-                statement.setTimestamp(6, null);
+                statement.setTimestamp(5, null);
             }
 
             statement.executeUpdate();
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    order.setId(generatedKeys.getInt(1));
+                }
+            }
+
         } catch (SQLException e) {
             throw new DataAccessException("Error while inserting order.", e);
         }
