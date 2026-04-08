@@ -85,6 +85,7 @@ CREATE TABLE `Order` (
      dateOrdered DATETIME NOT NULL,
      dateCompleted DATETIME NULL,
      status ENUM('ORDERED', 'IN_PREPARATION', 'READY', 'DELIVERED', 'CANCELLED') NOT NULL,
+     isPaid BOOLEAN NOT NULL DEFAULT FALSE,
      `table` INT(4) NOT NULL,
      dateDelivered DATETIME NULL,
      PRIMARY KEY (id),
@@ -99,7 +100,6 @@ CREATE TABLE `Order` (
          dateCompleted IS NULL OR dateDelivered IS NULL OR dateDelivered >= dateCompleted
          )
 );
-
 CREATE TABLE Payment (
     id INT(8) NOT NULL,
     `date` DATETIME NOT NULL,

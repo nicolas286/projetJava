@@ -30,7 +30,7 @@ public class OrderListPanel extends JPanel {
         JLabel titleLabel = new JLabel("Orders", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
 
-        String[] columnNames = {"Id", "Date Ordered", "Date Completed", "Status", "Table", "Date Delivered"};
+        String[] columnNames = {"Id", "Date Ordered", "Date Completed", "Status", "Paid", "Table", "Date Delivered"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -42,19 +42,28 @@ public class OrderListPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(ordersTable);
 
         JButton addButton = new JButton("Add Order");
+        JButton editButton = new JButton("Edit Selected");
+        JButton deleteButton = new JButton("Delete Selected");
         JButton takeOrderButton = new JButton("Take Order");
         JButton viewLinesButton = new JButton("View Selected Order Lines");
+        JButton refreshButton = new JButton("Refresh");
         JButton backButton = new JButton("Back to Home");
 
         addButton.addActionListener(e -> openAddDialog());
+        editButton.addActionListener(e -> openEditDialog());
+        deleteButton.addActionListener(e -> deleteSelectedOrder());
         takeOrderButton.addActionListener(e -> openTakeOrderDialog());
         viewLinesButton.addActionListener(e -> openSelectedOrderLines());
+        refreshButton.addActionListener(e -> loadOrders());
         backButton.addActionListener(e -> parentFrame.showHomeView());
 
         JPanel southPanel = new JPanel();
         southPanel.add(addButton);
+        southPanel.add(editButton);
+        southPanel.add(deleteButton);
         southPanel.add(takeOrderButton);
         southPanel.add(viewLinesButton);
+        southPanel.add(refreshButton);
         southPanel.add(backButton);
 
         add(titleLabel, BorderLayout.NORTH);
@@ -73,18 +82,14 @@ public class OrderListPanel extends JPanel {
                         order.getDateOrdered(),
                         order.getDateCompleted(),
                         order.getStatus(),
+                        order.isPaid(),
                         order.getTableId(),
                         order.getDateDelivered()
                 };
                 tableModel.addRow(row);
             }
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -94,6 +99,61 @@ public class OrderListPanel extends JPanel {
 
         if (dialog.isSaved()) {
             loadOrders();
+        }
+    }
+
+    private void openEditDialog() {
+        int selectedRow = ordersTable.getSelectedRow();
+
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Please select an order first.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        try {
+            int orderId = (Integer) tableModel.getValueAt(selectedRow, 0);
+            Order order = orderController.getOrderById(orderId);
+
+            if (order == null) {
+                JOptionPane.showMessageDialog(this, "Selected order not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            OrderFormDialog dialog = new OrderFormDialog(parentFrame, orderController, order);
+            dialog.setVisible(true);
+
+            if (dialog.isSaved()) {
+                loadOrders();
+            }
+        } catch (BusinessException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void deleteSelectedOrder() {
+        int selectedRow = ordersTable.getSelectedRow();
+
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Please select an order first.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        int orderId = (Integer) tableModel.getValueAt(selectedRow, 0);
+
+        int choice = JOptionPane.showConfirmDialog(
+                this,
+                "Delete order " + orderId + " ?",
+                "Confirmation",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (choice == JOptionPane.YES_OPTION) {
+            try {
+                orderController.deleteOrder(orderId);
+                loadOrders();
+            } catch (BusinessException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -110,12 +170,7 @@ public class OrderListPanel extends JPanel {
         int selectedRow = ordersTable.getSelectedRow();
 
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Please select an order first.",
-                    "Information",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            JOptionPane.showMessageDialog(this, "Please select an order first.", "Information", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 

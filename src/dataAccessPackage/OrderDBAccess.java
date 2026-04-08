@@ -15,10 +15,9 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
 
     @Override
     public void insert(Order order) throws DataAccessException {
-        String sql = "INSERT INTO `Order` (dateOrdered, dateCompleted, status, `table`, dateDelivered) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO `Order` (dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-
             statement.setTimestamp(1, Timestamp.valueOf(order.getDateOrdered()));
 
             if (order.getDateCompleted() != null) {
@@ -28,12 +27,13 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
             }
 
             statement.setString(3, order.getStatus());
-            statement.setInt(4, order.getTableId());
+            statement.setBoolean(4, order.isPaid());
+            statement.setInt(5, order.getTableId());
 
             if (order.getDateDelivered() != null) {
-                statement.setTimestamp(5, Timestamp.valueOf(order.getDateDelivered()));
+                statement.setTimestamp(6, Timestamp.valueOf(order.getDateDelivered()));
             } else {
-                statement.setTimestamp(5, null);
+                statement.setTimestamp(6, null);
             }
 
             statement.executeUpdate();
@@ -51,7 +51,7 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
 
     @Override
     public void update(Order order) throws DataAccessException {
-        String sql = "UPDATE `Order` SET dateOrdered = ?, dateCompleted = ?, status = ?, `table` = ?, dateDelivered = ? WHERE id = ?";
+        String sql = "UPDATE `Order` SET dateOrdered = ?, dateCompleted = ?, status = ?, isPaid = ?, `table` = ?, dateDelivered = ? WHERE id = ?";
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setTimestamp(1, Timestamp.valueOf(order.getDateOrdered()));
@@ -63,15 +63,16 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
             }
 
             statement.setString(3, order.getStatus());
-            statement.setInt(4, order.getTableId());
+            statement.setBoolean(4, order.isPaid());
+            statement.setInt(5, order.getTableId());
 
             if (order.getDateDelivered() != null) {
-                statement.setTimestamp(5, Timestamp.valueOf(order.getDateDelivered()));
+                statement.setTimestamp(6, Timestamp.valueOf(order.getDateDelivered()));
             } else {
-                statement.setTimestamp(5, null);
+                statement.setTimestamp(6, null);
             }
 
-            statement.setInt(6, order.getId());
+            statement.setInt(7, order.getId());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -103,7 +104,7 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
 
     @Override
     public List<Order> getAllOrders() throws DataAccessException {
-        String sql = "SELECT id, dateOrdered, dateCompleted, status, `table`, dateDelivered FROM `Order` ORDER BY id";
+        String sql = "SELECT id, dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered FROM `Order` ORDER BY id";
         List<Order> orders = new ArrayList<>();
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql);
@@ -121,7 +122,7 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
 
     @Override
     public Order getOrderById(int id) throws DataAccessException {
-        String sql = "SELECT id, dateOrdered, dateCompleted, status, `table`, dateDelivered FROM `Order` WHERE id = ?";
+        String sql = "SELECT id, dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered FROM `Order` WHERE id = ?";
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setInt(1, id);
@@ -139,7 +140,7 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
 
     @Override
     public List<Order> getOrdersByTableId(int tableId) throws DataAccessException {
-        String sql = "SELECT id, dateOrdered, dateCompleted, status, `table`, dateDelivered FROM `Order` WHERE `table` = ? ORDER BY dateOrdered DESC";
+        String sql = "SELECT id, dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered FROM `Order` WHERE `table` = ? ORDER BY dateOrdered DESC";
         List<Order> orders = new ArrayList<>();
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
@@ -174,6 +175,7 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
                 dateCompleted,
                 dateDelivered,
                 resultSet.getString("status"),
+                resultSet.getBoolean("isPaid"),
                 resultSet.getInt("table")
         );
     }

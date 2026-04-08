@@ -27,7 +27,7 @@ public class TableOrdersDialog extends JDialog {
     }
 
     private void buildInterface() {
-        setSize(800, 400);
+        setSize(850, 420);
         setLocationRelativeTo(getParent());
         setLayout(new BorderLayout());
 
@@ -46,13 +46,16 @@ public class TableOrdersDialog extends JDialog {
         JScrollPane scrollPane = new JScrollPane(ordersTable);
 
         JButton takeOrderButton = new JButton("Take Order For This Table");
+        JButton viewLinesButton = new JButton("View Selected Order Lines");
         JButton closeButton = new JButton("Close");
 
         takeOrderButton.addActionListener(e -> openTakeOrderDialog());
+        viewLinesButton.addActionListener(e -> openSelectedOrderLines());
         closeButton.addActionListener(e -> dispose());
 
         JPanel southPanel = new JPanel();
         southPanel.add(takeOrderButton);
+        southPanel.add(viewLinesButton);
         southPanel.add(closeButton);
 
         add(titleLabel, BorderLayout.NORTH);
@@ -92,5 +95,24 @@ public class TableOrdersDialog extends JDialog {
         if (dialog.isSaved()) {
             loadOrders();
         }
+    }
+
+    private void openSelectedOrderLines() {
+        int selectedRow = ordersTable.getSelectedRow();
+
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please select an order first.",
+                    "Information",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+
+        int orderId = (Integer) tableModel.getValueAt(selectedRow, 0);
+
+        OrderLinesDialog dialog = new OrderLinesDialog((JFrame) getParent(), orderId);
+        dialog.setVisible(true);
     }
 }

@@ -9,35 +9,76 @@ public class Order {
     private LocalDateTime dateCompleted;
     private LocalDateTime dateDelivered;
     private String status;
+    private boolean paid;
     private int tableId;
 
-    public Order() {}
+    public Order() {
+    }
 
     public Order(int id, LocalDateTime dateOrdered, LocalDateTime dateCompleted,
-                 LocalDateTime dateDelivered, String status, int tableId) {
+                 LocalDateTime dateDelivered, String status, boolean paid, int tableId) {
         this.id = id;
         this.dateOrdered = dateOrdered;
         this.dateCompleted = dateCompleted;
         this.dateDelivered = dateDelivered;
         this.status = status;
+        this.paid = paid;
         this.tableId = tableId;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public LocalDateTime getDateOrdered() { return dateOrdered; }
-    public void setDateOrdered(LocalDateTime dateOrdered) { this.dateOrdered = dateOrdered; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public LocalDateTime getDateCompleted() { return dateCompleted; }
-    public void setDateCompleted(LocalDateTime dateCompleted) { this.dateCompleted = dateCompleted; }
+    public LocalDateTime getDateOrdered() {
+        return dateOrdered;
+    }
 
-    public LocalDateTime getDateDelivered() { return dateDelivered; }
-    public void setDateDelivered(LocalDateTime dateDelivered) { this.dateDelivered = dateDelivered; }
+    public void setDateOrdered(LocalDateTime dateOrdered) {
+        this.dateOrdered = dateOrdered;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public LocalDateTime getDateCompleted() {
+        return dateCompleted;
+    }
 
-    public int getTableId() { return tableId; }
-    public void setTableId(int tableId) { this.tableId = tableId; }
+    public void setDateCompleted(LocalDateTime dateCompleted) {
+        this.dateCompleted = dateCompleted;
+    }
+
+    public LocalDateTime getDateDelivered() {
+        return dateDelivered;
+    }
+
+    public void setDateDelivered(LocalDateTime dateDelivered) {
+        this.dateDelivered = dateDelivered;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
+
+    public int getTableId() {
+        return tableId;
+    }
+
+    public void setTableId(int tableId) {
+        this.tableId = tableId;
+    }
 }

@@ -39,10 +39,10 @@ INSERT INTO Storage (id, isRefrigerated) VALUES
 (2, FALSE),
 (3, TRUE);
 
-INSERT INTO `Order` (id, dateOrdered, dateCompleted, status, `table`, dateDelivered) VALUES
-(10000001, '2026-03-15 12:05:00', '2026-03-15 12:20:00', 'DELIVERED', 1, '2026-03-15 12:25:00'),
-(10000002, '2026-03-15 12:10:00', '2026-03-15 12:30:00', 'READY', 2, NULL),
-(10000003, '2026-03-15 12:15:00', NULL, 'ORDERED', 1, NULL);
+INSERT INTO `Order` (id, dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered) VALUES
+(10000001, '2026-03-15 12:05:00', '2026-03-15 12:20:00', 'DELIVERED', TRUE, 1, '2026-03-15 12:25:00'),
+(10000002, '2026-03-15 12:10:00', '2026-03-15 12:30:00', 'READY', FALSE, 2, NULL),
+(10000003, '2026-03-15 12:15:00', NULL, 'ORDERED', FALSE, 1, NULL);
 
 INSERT INTO Payment (id, `date`, amount, method, `order`, status, transactionRef, currency) VALUES
 (20000001, '2026-03-15 12:26:00', 25.50, 'card', 10000001, 'COMPLETED', 'TXN-DELIV-001', 'EUR'),

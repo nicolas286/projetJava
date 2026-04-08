@@ -17,7 +17,7 @@ public class MainFrame extends JFrame {
         this.orderController = new OrderController();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 600);
+        setSize(1100, 700);
         setLocationRelativeTo(null);
 
         setContentPane(new HomePanel(this));
@@ -38,6 +38,24 @@ public class MainFrame extends JFrame {
 
     public void showOrdersView() {
         setContentPane(new OrderListPanel(this, orderController));
+        revalidate();
+        repaint();
+    }
+
+    public void showSearchOrdersByTableView() {
+        setContentPane(new SearchOrdersByTablePanel(this));
+        revalidate();
+        repaint();
+    }
+
+    public void showSearchProductCategoryConstraintView() {
+        setContentPane(new SearchProductCategoryConstraintPanel(this));
+        revalidate();
+        repaint();
+    }
+
+    public void showSearchLotStorageProductView() {
+        setContentPane(new SearchLotStorageProductPanel(this));
         revalidate();
         repaint();
     }

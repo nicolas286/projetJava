@@ -52,6 +52,7 @@ public class TakeOrderManager {
                     null,
                     null,
                     "ORDERED",
+                    false,
                     tableId
             );
 

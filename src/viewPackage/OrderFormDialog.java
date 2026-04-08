@@ -15,44 +15,50 @@ public class OrderFormDialog extends JDialog {
 
     private final OrderController orderController;
     private final TableController tableController;
+    private final Order existingOrder;
     private boolean saved;
 
-    private JTextField idField;
     private JTextField dateOrderedField;
     private JTextField dateCompletedField;
     private JComboBox<String> statusComboBox;
+    private JCheckBox paidCheckBox;
     private JComboBox<RestaurantTable> tableComboBox;
     private JTextField dateDeliveredField;
 
     public OrderFormDialog(JFrame parent, OrderController orderController) {
-        super(parent, "Add Order", true);
+        this(parent, orderController, null);
+    }
+
+    public OrderFormDialog(JFrame parent, OrderController orderController, Order existingOrder) {
+        super(parent, existingOrder == null ? "Add Order" : "Edit Order", true);
         this.orderController = orderController;
         this.tableController = new TableController();
+        this.existingOrder = existingOrder;
         this.saved = false;
 
         buildInterface();
         loadTables();
+        if (existingOrder != null) {
+            fillForm();
+        }
     }
 
     private void buildInterface() {
-        setSize(500, 320);
+        setSize(520, 340);
         setLocationRelativeTo(getParent());
         setLayout(new BorderLayout());
 
         JPanel formPanel = new JPanel(new GridLayout(6, 2, 5, 5));
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        idField = new JTextField();
-        dateOrderedField = new JTextField("2026-03-15T12:00");
+        dateOrderedField = new JTextField();
         dateCompletedField = new JTextField();
         statusComboBox = new JComboBox<>(new String[]{
                 "ORDERED", "IN_PREPARATION", "READY", "DELIVERED", "CANCELLED"
         });
+        paidCheckBox = new JCheckBox("Paid");
         tableComboBox = new JComboBox<>();
         dateDeliveredField = new JTextField();
-
-        formPanel.add(new JLabel("Id:"));
-        formPanel.add(idField);
 
         formPanel.add(new JLabel("Date Ordered (yyyy-MM-ddTHH:mm):"));
         formPanel.add(dateOrderedField);
@@ -63,13 +69,16 @@ public class OrderFormDialog extends JDialog {
         formPanel.add(new JLabel("Status:"));
         formPanel.add(statusComboBox);
 
+        formPanel.add(new JLabel("Paid:"));
+        formPanel.add(paidCheckBox);
+
         formPanel.add(new JLabel("Table:"));
         formPanel.add(tableComboBox);
 
         formPanel.add(new JLabel("Date Delivered (optional):"));
         formPanel.add(dateDeliveredField);
 
-        JButton saveButton = new JButton("Save");
+        JButton saveButton = new JButton(existingOrder == null ? "Save" : "Update");
         JButton cancelButton = new JButton("Cancel");
 
         saveButton.addActionListener(e -> saveOrder());
@@ -95,18 +104,41 @@ public class OrderFormDialog extends JDialog {
             tableComboBox.setModel(comboBoxModel);
 
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void fillForm() {
+        dateOrderedField.setText(existingOrder.getDateOrdered().toString());
+
+        if (existingOrder.getDateCompleted() != null) {
+            dateCompletedField.setText(existingOrder.getDateCompleted().toString());
+        }
+
+        statusComboBox.setSelectedItem(existingOrder.getStatus());
+        paidCheckBox.setSelected(existingOrder.isPaid());
+
+        selectTableById(existingOrder.getTableId());
+
+        if (existingOrder.getDateDelivered() != null) {
+            dateDeliveredField.setText(existingOrder.getDateDelivered().toString());
+        }
+    }
+
+    private void selectTableById(int tableId) {
+        ComboBoxModel<RestaurantTable> model = tableComboBox.getModel();
+
+        for (int i = 0; i < model.getSize(); i++) {
+            RestaurantTable table = model.getElementAt(i);
+            if (table.getId() == tableId) {
+                tableComboBox.setSelectedIndex(i);
+                return;
+            }
         }
     }
 
     private void saveOrder() {
         try {
-            int id = 0;
             LocalDateTime dateOrdered = LocalDateTime.parse(dateOrderedField.getText().trim());
 
             LocalDateTime dateCompleted = null;
@@ -115,6 +147,7 @@ public class OrderFormDialog extends JDialog {
             }
 
             String status = (String) statusComboBox.getSelectedItem();
+            boolean isPaid = paidCheckBox.isSelected();
 
             RestaurantTable selectedTable = (RestaurantTable) tableComboBox.getSelectedItem();
             if (selectedTable == null) {
@@ -127,8 +160,14 @@ public class OrderFormDialog extends JDialog {
                 dateDelivered = LocalDateTime.parse(dateDeliveredField.getText().trim());
             }
 
-            Order order = new Order(id, dateOrdered, dateCompleted, dateDelivered, status, selectedTable.getId());
-            orderController.addOrder(order);
+            Order order;
+            if (existingOrder == null) {
+                order = new Order(0, dateOrdered, dateCompleted, dateDelivered, status, isPaid, selectedTable.getId());
+                orderController.addOrder(order);
+            } else {
+                order = new Order(existingOrder.getId(), dateOrdered, dateCompleted, dateDelivered, status, isPaid, selectedTable.getId());
+                orderController.updateOrder(order);
+            }
 
             saved = true;
             dispose();
