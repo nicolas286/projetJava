@@ -1,5 +1,7 @@
 package modelPackage;
 
+import java.util.Objects;
+
 public class RestaurantTable {
     private int id;
     private int positionX;
@@ -86,5 +88,17 @@ public class RestaurantTable {
     @Override
     public String toString() {
         return "Table " + id + " (" + capacity + " seats)";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RestaurantTable that)) return false;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -40,6 +40,12 @@ public class TakeOrderDialog extends JDialog {
         loadProducts();
     }
 
+    public TakeOrderDialog(JFrame parent, RestaurantTable preselectedTable) {
+        this(parent);
+        selectTableById(preselectedTable.getId());
+        tableComboBox.setEnabled(false);
+    }
+
     private void buildInterface() {
         setSize(750, 500);
         setLocationRelativeTo(getParent());
@@ -48,11 +54,13 @@ public class TakeOrderDialog extends JDialog {
         JPanel formPanel = new JPanel(new GridLayout(2, 4, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
+
         tableComboBox = new JComboBox<>();
         productComboBox = new JComboBox<>();
         quantitySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
 
         formPanel.add(new JLabel("Order Id:"));
+
         formPanel.add(new JLabel("Table:"));
         formPanel.add(tableComboBox);
 
@@ -137,6 +145,18 @@ public class TakeOrderDialog extends JDialog {
         }
     }
 
+    private void selectTableById(int tableId) {
+        ComboBoxModel<RestaurantTable> model = tableComboBox.getModel();
+
+        for (int i = 0; i < model.getSize(); i++) {
+            RestaurantTable table = model.getElementAt(i);
+            if (table.getId() == tableId) {
+                tableComboBox.setSelectedIndex(i);
+                return;
+            }
+        }
+    }
+
     private void addLine() {
         Product selectedProduct = (Product) productComboBox.getSelectedItem();
         int quantity = (Integer) quantitySpinner.getValue();
@@ -196,13 +216,6 @@ public class TakeOrderDialog extends JDialog {
                     this,
                     e.getMessage(),
                     "Business error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Order id must be a valid integer.",
-                    "Validation error",
                     JOptionPane.ERROR_MESSAGE
             );
         }

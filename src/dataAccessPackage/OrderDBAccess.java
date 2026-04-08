@@ -137,6 +137,26 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
         }
     }
 
+    @Override
+    public List<Order> getOrdersByTableId(int tableId) throws DataAccessException {
+        String sql = "SELECT id, dateOrdered, dateCompleted, status, `table`, dateDelivered FROM `Order` WHERE `table` = ? ORDER BY dateOrdered DESC";
+        List<Order> orders = new ArrayList<>();
+
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setInt(1, tableId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    orders.add(mapOrder(resultSet));
+                }
+            }
+
+            return orders;
+        } catch (SQLException e) {
+            throw new DataAccessException("Error while retrieving orders for table " + tableId + ".", e);
+        }
+    }
+
     private Order mapOrder(ResultSet resultSet) throws SQLException {
         LocalDateTime dateCompleted = null;
         if (resultSet.getTimestamp("dateCompleted") != null) {

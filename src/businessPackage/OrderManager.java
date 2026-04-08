@@ -68,6 +68,18 @@ public class OrderManager {
         }
     }
 
+    public List<Order> getOrdersByTableId(int tableId) throws BusinessException {
+        if (tableId <= 0) {
+            throw new BusinessException("Table id must be positive.");
+        }
+
+        try {
+            return orderDataAccess.getOrdersByTableId(tableId);
+        } catch (DataAccessException e) {
+            throw new BusinessException("Unable to retrieve orders for the selected table.", e);
+        }
+    }
+
     private void validateOrder(Order order) throws BusinessException {
         if (order == null) {
             throw new BusinessException("Order cannot be null.");

@@ -34,4 +34,8 @@ public class OrderController {
     public void deleteOrder(int id) throws BusinessException {
         orderManager.deleteOrder(id);
     }
+
+    public List<Order> getOrdersByTableId(int tableId) throws BusinessException {
+        return orderManager.getOrdersByTableId(tableId);
+    }
 }

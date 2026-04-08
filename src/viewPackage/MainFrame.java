@@ -31,7 +31,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showTablesView() {
-        setContentPane(new TableListPanel(this, tableController));
+        setContentPane(new RoomPlanPanel(this, tableController));
         revalidate();
         repaint();
     }
