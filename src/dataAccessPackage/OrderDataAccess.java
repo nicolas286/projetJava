@@ -11,5 +11,7 @@ public interface OrderDataAccess extends GenericDAO<Order, Integer> {
 
     Order getOrderById(int id) throws DataAccessException;
 
+    // Il faut supprimer ces deux là : on a déjà findall et findbyid définies dans la DAO générique
+
     List<Order> getOrdersByTableId(int tableId) throws DataAccessException;
 }

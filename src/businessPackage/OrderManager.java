@@ -27,12 +27,15 @@ public class OrderManager {
     public Order getOrderById(int id) throws BusinessException {
         if (id <= 0) {
             throw new BusinessException("Order id must be positive.");
+            // "...must be greater than 0"
         }
-
         try {
             return orderDataAccess.getOrderById(id);
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to retrieve order.", e);
+
+            // Donner plus d'infos dans message d'erreur :
+            // "Unable to retrieve order, id:" + orderId
         }
     }
 
@@ -53,6 +56,8 @@ public class OrderManager {
             orderDataAccess.update(order);
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to update order.", e);
+            // Donner plus d'infos dans message d'erreur :
+            // "Unable to update order, id:" + order.getId()
         }
     }
 
@@ -65,18 +70,23 @@ public class OrderManager {
             orderDataAccess.delete(id);
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to delete order.", e);
+            // Donner plus d'infos dans message d'erreur :
+            // "Unable to delete order, id:" + id
         }
     }
 
     public List<Order> getOrdersByTableId(int tableId) throws BusinessException {
         if (tableId <= 0) {
             throw new BusinessException("Table id must be positive.");
+            // "...must be greater than 0"
         }
 
         try {
             return orderDataAccess.getOrdersByTableId(tableId);
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to retrieve orders for the selected table.", e);
+            // Donner plus d'infos dans message d'erreur :
+            // "Unable to retrieve orders for table" + tableId
         }
     }
 
@@ -87,6 +97,7 @@ public class OrderManager {
 
         if (order.getId() <= 0) {
             throw new BusinessException("Order id must be positive.");
+            // ... must be greater than 0
         }
 
         if (order.getDateOrdered() == null) {
@@ -99,6 +110,7 @@ public class OrderManager {
 
         if (order.getTableId() <= 0) {
             throw new BusinessException("Table id must be positive.");
+            // ...must be greater than 0
         }
 
         LocalDateTime ordered = order.getDateOrdered();

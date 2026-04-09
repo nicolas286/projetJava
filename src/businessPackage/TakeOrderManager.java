@@ -38,7 +38,7 @@ public class TakeOrderManager {
     public void takeOrder(int tableId, List<TakeOrderLine> lines) throws BusinessException {
 
         if (tableId <= 0) {
-            throw new BusinessException("Table id must be positive.");
+            throw new BusinessException("Table id must be positive."); // greater than 0
         }
 
         if (lines == null || lines.isEmpty()) {

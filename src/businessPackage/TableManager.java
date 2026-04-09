@@ -25,13 +25,13 @@ public class TableManager {
 
     public RestaurantTable getTableById(int id) throws BusinessException {
         if (id <= 0) {
-            throw new BusinessException("Table id must be positive.");
+            throw new BusinessException("Table id must be positive."); // greater than 0
         }
 
         try {
             return tableDataAccess.getTableById(id);
         } catch (DataAccessException e) {
-            throw new BusinessException("Unable to retrieve table.", e);
+            throw new BusinessException("Unable to retrieve table.", e); // for id: " + id
         }
     }
 }

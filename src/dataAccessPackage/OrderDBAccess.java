@@ -86,6 +86,15 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
         String deletePaymentsSql = "DELETE FROM Payment WHERE `order` = ?";
         String deleteOrderSql = "DELETE FROM `Order` WHERE id = ?";
 
+        // Ci dessous tu appelles plusieurs fois getConnection().
+        // C'est OK uniquement parce que c'est un singleton, sinon il te ferait plusieurs connexions
+        /* Pour que ce soit propre et robuste il faut faire :
+        Connection connection = getConnection();
+        puis tu reprends de connection, ex :
+        connection.setAutoCommit(false);
+        Comme ça tu ne bosses que sur une seule connection
+         */
+
         try {
             getConnection().setAutoCommit(false);
 
@@ -124,6 +133,9 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
     public List<Order> findAll() throws DataAccessException {
         return getAllOrders();
     }
+
+    // Tu vois ici les deux précédentes renvoient à getOrderById et getAllOrders => car redondance
+    // Il faut directement utiliser findById et findAll
 
     @Override
     public List<Order> getAllOrders() throws DataAccessException {

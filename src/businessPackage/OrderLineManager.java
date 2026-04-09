@@ -24,6 +24,9 @@ public class OrderLineManager {
             return orderLineDataAccess.getLinesByOrderId(orderId);
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to retrieve order lines.", e);
+
+            // Donner plus d'infos dans message d'erreur :
+            // "Unable to retrieve order lines for order id:" + orderId
         }
     }
 }
