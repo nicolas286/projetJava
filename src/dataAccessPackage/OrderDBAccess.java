@@ -3,6 +3,7 @@ package dataAccessPackage;
 import exceptionPackage.DataAccessException;
 import modelPackage.Order;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -87,11 +88,12 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
         String deleteOrderSql = "DELETE FROM `Order` WHERE id = ?";
 
         try {
-            getConnection().setAutoCommit(false);
+            Connection connection = getConnection();
+            connection.setAutoCommit(false);
 
-            try (PreparedStatement deleteOrderLinesStatement = getConnection().prepareStatement(deleteOrderLinesSql);
-                 PreparedStatement deletePaymentsStatement = getConnection().prepareStatement(deletePaymentsSql);
-                 PreparedStatement deleteOrderStatement = getConnection().prepareStatement(deleteOrderSql)) {
+            try (PreparedStatement deleteOrderLinesStatement = connection.prepareStatement(deleteOrderLinesSql);
+                 PreparedStatement deletePaymentsStatement = connection.prepareStatement(deletePaymentsSql);
+                 PreparedStatement deleteOrderStatement = connection.prepareStatement(deleteOrderSql)) {
 
                 deleteOrderLinesStatement.setInt(1, id);
                 deleteOrderLinesStatement.executeUpdate();
@@ -102,12 +104,12 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
                 deleteOrderStatement.setInt(1, id);
                 deleteOrderStatement.executeUpdate();
 
-                getConnection().commit();
+                connection.commit();
             } catch (SQLException e) {
-                getConnection().rollback();
+                connection.rollback();
                 throw new DataAccessException("Error while deleting order.", e);
             } finally {
-                getConnection().setAutoCommit(true);
+                connection.setAutoCommit(true);
             }
 
         } catch (SQLException e) {

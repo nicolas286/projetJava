@@ -1,5 +1,7 @@
 package viewPackage;
 
+import javax.swing.SwingUtilities;
+
 public class BannerThread extends Thread {
 
     private final BannerPanel bannerPanel;
@@ -13,7 +15,7 @@ public class BannerThread extends Thread {
         while (true) {
             try {
                 Thread.sleep(250);
-                bannerPanel.moveText();
+                SwingUtilities.invokeLater(bannerPanel::moveText);
             } catch (InterruptedException e) {
                 return;
             }

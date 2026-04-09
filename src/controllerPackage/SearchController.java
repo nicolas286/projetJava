@@ -1,7 +1,6 @@
 package controllerPackage;
 
 import businessPackage.SearchManager;
-import dataAccessPackage.SearchDBAccess;
 import exceptionPackage.BusinessException;
 import modelPackage.LotStorageProductSearchResult;
 import modelPackage.ProductCategoryConstraintSearchResult;
@@ -14,7 +13,7 @@ public class SearchController {
     private final SearchManager searchManager;
 
     public SearchController() {
-        this.searchManager = new SearchManager(new SearchDBAccess());
+        this.searchManager = new SearchManager();
     }
 
     public List<TableOrderLineSearchResult> searchOrdersByTableId(int tableId) throws BusinessException {

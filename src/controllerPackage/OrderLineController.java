@@ -1,7 +1,6 @@
 package controllerPackage;
 
 import businessPackage.OrderLineManager;
-import dataAccessPackage.OrderLineDBAccess;
 import exceptionPackage.BusinessException;
 import modelPackage.OrderLine;
 
@@ -12,7 +11,7 @@ public class OrderLineController {
     private final OrderLineManager orderLineManager;
 
     public OrderLineController() {
-        this.orderLineManager = new OrderLineManager(new OrderLineDBAccess());
+        this.orderLineManager = new OrderLineManager();
     }
 
     public List<OrderLine> getLinesByOrderId(int orderId) throws BusinessException {

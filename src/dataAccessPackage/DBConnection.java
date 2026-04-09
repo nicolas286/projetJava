@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DBConnection {
 
     private static DBConnection instance;
-    private Connection connection;
+    private final Connection connection;
 
     private final String URL = "jdbc:mysql://localhost:3306/projet_java";
     private final String USER = "root";
@@ -16,9 +16,8 @@ public class DBConnection {
     private DBConnection() throws SQLException {
         try {
             this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        }
-        catch (SQLException e) {
-            throw new SQLException("Database connection failed");
+        } catch (SQLException e) {
+            throw new SQLException("Database connection failed.", e);
         }
     }
 

@@ -1,5 +1,6 @@
 package businessPackage;
 
+import dataAccessPackage.OrderDBAccess;
 import dataAccessPackage.OrderDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
@@ -12,8 +13,8 @@ public class OrderManager {
 
     private final OrderDataAccess orderDataAccess;
 
-    public OrderManager(OrderDataAccess orderDataAccess) {
-        this.orderDataAccess = orderDataAccess;
+    public OrderManager() {
+        this.orderDataAccess = new OrderDBAccess();
     }
 
     public List<Order> getAllOrders() throws BusinessException {
@@ -83,10 +84,6 @@ public class OrderManager {
     private void validateOrder(Order order) throws BusinessException {
         if (order == null) {
             throw new BusinessException("Order cannot be null.");
-        }
-
-        if (order.getId() <= 0) {
-            throw new BusinessException("Order id must be positive.");
         }
 
         if (order.getDateOrdered() == null) {

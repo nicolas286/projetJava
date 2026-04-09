@@ -1,5 +1,6 @@
 package businessPackage;
 
+import dataAccessPackage.SearchDBAccess;
 import dataAccessPackage.SearchDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
@@ -13,8 +14,8 @@ public class SearchManager {
 
     private final SearchDataAccess searchDataAccess;
 
-    public SearchManager(SearchDataAccess searchDataAccess) {
-        this.searchDataAccess = searchDataAccess;
+    public SearchManager() {
+        this.searchDataAccess = new SearchDBAccess();
     }
 
     public List<TableOrderLineSearchResult> searchOrdersByTableId(int tableId) throws BusinessException {

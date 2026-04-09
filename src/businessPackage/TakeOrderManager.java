@@ -1,7 +1,10 @@
 package businessPackage;
 
+import dataAccessPackage.OrderDBAccess;
 import dataAccessPackage.OrderDataAccess;
+import dataAccessPackage.OrderLineDBAccess;
 import dataAccessPackage.OrderLineDataAccess;
+import dataAccessPackage.ProductDBAccess;
 import dataAccessPackage.ProductDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
@@ -19,12 +22,10 @@ public class TakeOrderManager {
     private final OrderDataAccess orderDataAccess;
     private final OrderLineDataAccess orderLineDataAccess;
 
-    public TakeOrderManager(ProductDataAccess productDataAccess,
-                            OrderDataAccess orderDataAccess,
-                            OrderLineDataAccess orderLineDataAccess) {
-        this.productDataAccess = productDataAccess;
-        this.orderDataAccess = orderDataAccess;
-        this.orderLineDataAccess = orderLineDataAccess;
+    public TakeOrderManager() {
+        this.productDataAccess = new ProductDBAccess();
+        this.orderDataAccess = new OrderDBAccess();
+        this.orderLineDataAccess = new OrderLineDBAccess();
     }
 
     public List<Product> getAvailableProducts() throws BusinessException {
@@ -36,7 +37,6 @@ public class TakeOrderManager {
     }
 
     public void takeOrder(int tableId, List<TakeOrderLine> lines) throws BusinessException {
-
         if (tableId <= 0) {
             throw new BusinessException("Table id must be positive.");
         }
@@ -59,9 +59,16 @@ public class TakeOrderManager {
             orderDataAccess.insert(order);
 
             int orderId = order.getId();
-
             int lineNumber = 1;
+
             for (TakeOrderLine takeOrderLine : lines) {
+                if (takeOrderLine.getProduct() == null) {
+                    throw new BusinessException("A selected product is missing.");
+                }
+
+                if (takeOrderLine.getQuantity() <= 0) {
+                    throw new BusinessException("Quantity must be positive.");
+                }
 
                 Product product = takeOrderLine.getProduct();
 

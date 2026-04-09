@@ -59,7 +59,6 @@ public class TakeOrderDialog extends JDialog {
         productComboBox = new JComboBox<>();
         quantitySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
 
-        formPanel.add(new JLabel("Order Id:"));
 
         formPanel.add(new JLabel("Table:"));
         formPanel.add(tableComboBox);

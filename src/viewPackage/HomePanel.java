@@ -34,7 +34,7 @@ public class HomePanel extends JPanel {
         JButton search1Button = new JButton("Search 1");
         JButton search2Button = new JButton("Search 2");
         JButton search3Button = new JButton("Search 3");
-        JButton threadButton = new JButton("Thread OK");
+
 
         roomPlanButton.addActionListener(e -> parentFrame.showTablesView());
         ordersButton.addActionListener(e -> parentFrame.showOrdersView());
@@ -44,7 +44,7 @@ public class HomePanel extends JPanel {
 
         productsButton.setEnabled(false);
         menusButton.setEnabled(false);
-        threadButton.setEnabled(false);
+
 
         centerPanel.add(productsButton);
         centerPanel.add(menusButton);
@@ -53,7 +53,7 @@ public class HomePanel extends JPanel {
         centerPanel.add(search1Button);
         centerPanel.add(search2Button);
         centerPanel.add(search3Button);
-        centerPanel.add(threadButton);
+
 
         add(northPanel, BorderLayout.NORTH);
         add(centerPanel, BorderLayout.CENTER);

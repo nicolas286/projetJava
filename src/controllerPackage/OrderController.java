@@ -1,7 +1,6 @@
 package controllerPackage;
 
 import businessPackage.OrderManager;
-import dataAccessPackage.OrderDBAccess;
 import exceptionPackage.BusinessException;
 import modelPackage.Order;
 
@@ -12,7 +11,7 @@ public class OrderController {
     private final OrderManager orderManager;
 
     public OrderController() {
-        this.orderManager = new OrderManager(new OrderDBAccess());
+        this.orderManager = new OrderManager();
     }
 
     public List<Order> getAllOrders() throws BusinessException {

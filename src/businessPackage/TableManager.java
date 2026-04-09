@@ -1,5 +1,6 @@
 package businessPackage;
 
+import dataAccessPackage.TableDBAccess;
 import dataAccessPackage.TableDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
@@ -11,8 +12,8 @@ public class TableManager {
 
     private final TableDataAccess tableDataAccess;
 
-    public TableManager(TableDataAccess tableDataAccess) {
-        this.tableDataAccess = tableDataAccess;
+    public TableManager() {
+        this.tableDataAccess = new TableDBAccess();
     }
 
     public List<RestaurantTable> getAllTables() throws BusinessException {

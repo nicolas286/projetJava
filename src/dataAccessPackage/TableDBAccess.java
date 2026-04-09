@@ -12,6 +12,76 @@ import java.util.List;
 public class TableDBAccess extends AbstractDAO implements TableDataAccess {
 
     @Override
+    public void insert(RestaurantTable entity) throws DataAccessException {
+        String sql = "INSERT INTO `Table` (id, positionX, positionY, floor, capacity, isActive) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setInt(1, entity.getId());
+            statement.setInt(2, entity.getPositionX());
+            statement.setInt(3, entity.getPositionY());
+
+            if (entity.getFloor() != null) {
+                statement.setInt(4, entity.getFloor());
+            } else {
+                statement.setNull(4, java.sql.Types.INTEGER);
+            }
+
+            statement.setInt(5, entity.getCapacity());
+            statement.setBoolean(6, entity.isActive());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error while inserting table.", e);
+        }
+    }
+
+    @Override
+    public void update(RestaurantTable entity) throws DataAccessException {
+        String sql = "UPDATE `Table` SET positionX = ?, positionY = ?, floor = ?, capacity = ?, isActive = ? WHERE id = ?";
+
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setInt(1, entity.getPositionX());
+            statement.setInt(2, entity.getPositionY());
+
+            if (entity.getFloor() != null) {
+                statement.setInt(3, entity.getFloor());
+            } else {
+                statement.setNull(3, java.sql.Types.INTEGER);
+            }
+
+            statement.setInt(4, entity.getCapacity());
+            statement.setBoolean(5, entity.isActive());
+            statement.setInt(6, entity.getId());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error while updating table.", e);
+        }
+    }
+
+    @Override
+    public void delete(Integer id) throws DataAccessException {
+        String sql = "DELETE FROM `Table` WHERE id = ?";
+
+        try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error while deleting table.", e);
+        }
+    }
+
+    @Override
+    public RestaurantTable findById(Integer id) throws DataAccessException {
+        return getTableById(id);
+    }
+
+    @Override
+    public List<RestaurantTable> findAll() throws DataAccessException {
+        return getAllTables();
+    }
+
+    @Override
     public List<RestaurantTable> getAllTables() throws DataAccessException {
         String sql = "SELECT id, positionX, positionY, floor, capacity, isActive FROM `Table` ORDER BY id";
         List<RestaurantTable> tables = new ArrayList<>();
