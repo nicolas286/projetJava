@@ -57,15 +57,18 @@ public class ProductDBAccess extends AbstractDAO implements ProductDataAccess {
     @Override
     public Product findById(Integer id) throws DataAccessException {
         return getProductById(id);
-    }
+    } // Wrapper inutile lié à la redondance (voir l'autre fichier productdataaccess)
+    
 
     @Override
     public List<Product> findAll() throws DataAccessException {
         return getAllProducts();
-    }
+    } // Wrapper inutile lié à la redondance (voir l'autre fichier productdataaccess)
+
+    // Donc en gros tu peux retirer ces deux là et directement implémenter findById et findAll plus bas à la place de getProductById et getAllProducts
 
     @Override
-    public List<Product> getAllProducts() throws DataAccessException {
+    public List<Product> getAllProducts() throws DataAccessException { // findAll...
         String sql = "SELECT id, name, price, lot FROM Product ORDER BY name";
         List<Product> products = new ArrayList<>();
 
@@ -82,7 +85,7 @@ public class ProductDBAccess extends AbstractDAO implements ProductDataAccess {
     }
 
     @Override
-    public Product getProductById(int id) throws DataAccessException {
+    public Product getProductById(int id) throws DataAccessException { // findById...
         String sql = "SELECT id, name, price, lot FROM Product WHERE id = ?";
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
@@ -96,6 +99,7 @@ public class ProductDBAccess extends AbstractDAO implements ProductDataAccess {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error while retrieving product.", e);
+            // throw new DataAccessException("Error while retrieving product with id " + id + ".", e);
         }
     }
 
