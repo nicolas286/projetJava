@@ -54,6 +54,7 @@ public class OrderLineDBAccess extends AbstractDAO implements OrderLineDataAcces
             return lines;
         } catch (SQLException e) {
             throw new DataAccessException("Error while retrieving order lines.", e);
+            //throw new DataAccessException("Error while retrieving order lines for order id " + orderId + ".", e);
         }
     }
 
