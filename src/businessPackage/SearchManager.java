@@ -15,7 +15,14 @@ public class SearchManager {
     private final SearchDataAccess searchDataAccess;
 
     public SearchManager() {
-        this.searchDataAccess = new SearchDBAccess();
+        this(new SearchDBAccess());
+    }
+
+    public SearchManager(SearchDataAccess searchDataAccess) {
+        if (searchDataAccess == null) {
+            throw new IllegalArgumentException("SearchDataAccess cannot be null.");
+        }
+        this.searchDataAccess = searchDataAccess;
     }
 
     public List<TableOrderLineSearchResult> searchOrdersByTableId(int tableId) throws BusinessException {

@@ -5,7 +5,7 @@ import exceptionPackage.DataAccessException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public abstract class AbstractDAO {
+public abstract class AbstractDAO<T, ID> implements GenericDAO<T, ID> {
 
     protected Connection getConnection() throws DataAccessException {
         try {

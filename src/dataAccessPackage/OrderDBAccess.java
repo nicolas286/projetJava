@@ -7,24 +7,28 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
+public class OrderDBAccess extends AbstractDAO<Order, Integer> implements OrderDataAccess {
 
     @Override
     public void insert(Order order) throws DataAccessException {
-        String sql = "INSERT INTO `Order` (dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = """
+                INSERT INTO `Order` (dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """;
 
-        try (PreparedStatement statement = getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setTimestamp(1, Timestamp.valueOf(order.getDateOrdered()));
 
             if (order.getDateCompleted() != null) {
                 statement.setTimestamp(2, Timestamp.valueOf(order.getDateCompleted()));
             } else {
-                statement.setTimestamp(2, null);
+                statement.setNull(2, java.sql.Types.TIMESTAMP);
             }
 
             statement.setString(3, order.getStatus());
@@ -34,7 +38,7 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
             if (order.getDateDelivered() != null) {
                 statement.setTimestamp(6, Timestamp.valueOf(order.getDateDelivered()));
             } else {
-                statement.setTimestamp(6, null);
+                statement.setNull(6, java.sql.Types.TIMESTAMP);
             }
 
             statement.executeUpdate();
@@ -52,7 +56,11 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
 
     @Override
     public void update(Order order) throws DataAccessException {
-        String sql = "UPDATE `Order` SET dateOrdered = ?, dateCompleted = ?, status = ?, isPaid = ?, `table` = ?, dateDelivered = ? WHERE id = ?";
+        String sql = """
+                UPDATE `Order`
+                SET dateOrdered = ?, dateCompleted = ?, status = ?, isPaid = ?, `table` = ?, dateDelivered = ?
+                WHERE id = ?
+                """;
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setTimestamp(1, Timestamp.valueOf(order.getDateOrdered()));
@@ -60,7 +68,7 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
             if (order.getDateCompleted() != null) {
                 statement.setTimestamp(2, Timestamp.valueOf(order.getDateCompleted()));
             } else {
-                statement.setTimestamp(2, null);
+                statement.setNull(2, java.sql.Types.TIMESTAMP);
             }
 
             statement.setString(3, order.getStatus());
@@ -70,7 +78,7 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
             if (order.getDateDelivered() != null) {
                 statement.setTimestamp(6, Timestamp.valueOf(order.getDateDelivered()));
             } else {
-                statement.setTimestamp(6, null);
+                statement.setNull(6, java.sql.Types.TIMESTAMP);
             }
 
             statement.setInt(7, order.getId());
@@ -87,8 +95,9 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
         String deletePaymentsSql = "DELETE FROM Payment WHERE `order` = ?";
         String deleteOrderSql = "DELETE FROM `Order` WHERE id = ?";
 
+        Connection connection = getConnection();
+
         try {
-            Connection connection = getConnection();
             connection.setAutoCommit(false);
 
             try (PreparedStatement deleteOrderLinesStatement = connection.prepareStatement(deleteOrderLinesSql);
@@ -119,35 +128,11 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
 
     @Override
     public Order findById(Integer id) throws DataAccessException {
-        return getOrderById(id);
-    }
-
-    @Override
-    public List<Order> findAll() throws DataAccessException {
-        return getAllOrders();
-    }
-
-    @Override
-    public List<Order> getAllOrders() throws DataAccessException {
-        String sql = "SELECT id, dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered FROM `Order` ORDER BY id";
-        List<Order> orders = new ArrayList<>();
-
-        try (PreparedStatement statement = getConnection().prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                orders.add(mapOrder(resultSet));
-            }
-
-            return orders;
-        } catch (SQLException e) {
-            throw new DataAccessException("Error while retrieving orders.", e);
-        }
-    }
-
-    @Override
-    public Order getOrderById(int id) throws DataAccessException {
-        String sql = "SELECT id, dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered FROM `Order` WHERE id = ?";
+        String sql = """
+                SELECT id, dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered
+                FROM `Order`
+                WHERE id = ?
+                """;
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
             statement.setInt(1, id);
@@ -164,8 +149,37 @@ public class OrderDBAccess extends AbstractDAO implements OrderDataAccess {
     }
 
     @Override
+    public List<Order> findAll() throws DataAccessException {
+        String sql = """
+                SELECT id, dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered
+                FROM `Order`
+                ORDER BY id
+                """;
+
+        List<Order> orders = new ArrayList<>();
+
+        try (PreparedStatement statement = getConnection().prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                orders.add(mapOrder(resultSet));
+            }
+
+            return orders;
+        } catch (SQLException e) {
+            throw new DataAccessException("Error while retrieving orders.", e);
+        }
+    }
+
+    @Override
     public List<Order> getOrdersByTableId(int tableId) throws DataAccessException {
-        String sql = "SELECT id, dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered FROM `Order` WHERE `table` = ? ORDER BY dateOrdered DESC";
+        String sql = """
+                SELECT id, dateOrdered, dateCompleted, status, isPaid, `table`, dateDelivered
+                FROM `Order`
+                WHERE `table` = ?
+                ORDER BY dateOrdered DESC
+                """;
+
         List<Order> orders = new ArrayList<>();
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {

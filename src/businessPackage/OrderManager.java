@@ -14,12 +14,19 @@ public class OrderManager {
     private final OrderDataAccess orderDataAccess;
 
     public OrderManager() {
-        this.orderDataAccess = new OrderDBAccess();
+        this(new OrderDBAccess());
+    }
+
+    public OrderManager(OrderDataAccess orderDataAccess) {
+        if (orderDataAccess == null) {
+            throw new IllegalArgumentException("OrderDataAccess cannot be null.");
+        }
+        this.orderDataAccess = orderDataAccess;
     }
 
     public List<Order> getAllOrders() throws BusinessException {
         try {
-            return orderDataAccess.getAllOrders();
+            return orderDataAccess.findAll();
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to retrieve orders.", e);
         }
@@ -31,7 +38,7 @@ public class OrderManager {
         }
 
         try {
-            return orderDataAccess.getOrderById(id);
+            return orderDataAccess.findById(id);
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to retrieve order.", e);
         }
@@ -49,6 +56,10 @@ public class OrderManager {
 
     public void updateOrder(Order order) throws BusinessException {
         validateOrder(order);
+
+        if (order.getId() <= 0) {
+            throw new BusinessException("Order id must be positive for update.");
+        }
 
         try {
             orderDataAccess.update(order);

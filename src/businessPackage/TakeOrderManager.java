@@ -23,9 +23,25 @@ public class TakeOrderManager {
     private final OrderLineDataAccess orderLineDataAccess;
 
     public TakeOrderManager() {
-        this.productDataAccess = new ProductDBAccess();
-        this.orderDataAccess = new OrderDBAccess();
-        this.orderLineDataAccess = new OrderLineDBAccess();
+        this(new ProductDBAccess(), new OrderDBAccess(), new OrderLineDBAccess());
+    }
+
+    public TakeOrderManager(ProductDataAccess productDataAccess,
+                            OrderDataAccess orderDataAccess,
+                            OrderLineDataAccess orderLineDataAccess) {
+        if (productDataAccess == null) {
+            throw new IllegalArgumentException("ProductDataAccess cannot be null.");
+        }
+        if (orderDataAccess == null) {
+            throw new IllegalArgumentException("OrderDataAccess cannot be null.");
+        }
+        if (orderLineDataAccess == null) {
+            throw new IllegalArgumentException("OrderLineDataAccess cannot be null.");
+        }
+
+        this.productDataAccess = productDataAccess;
+        this.orderDataAccess = orderDataAccess;
+        this.orderLineDataAccess = orderLineDataAccess;
     }
 
     public List<Product> getAvailableProducts() throws BusinessException {
@@ -45,6 +61,8 @@ public class TakeOrderManager {
             throw new BusinessException("At least one order line is required.");
         }
 
+        validateTakeOrderLines(lines);
+
         try {
             Order order = new Order(
                     0,
@@ -62,14 +80,6 @@ public class TakeOrderManager {
             int lineNumber = 1;
 
             for (TakeOrderLine takeOrderLine : lines) {
-                if (takeOrderLine.getProduct() == null) {
-                    throw new BusinessException("A selected product is missing.");
-                }
-
-                if (takeOrderLine.getQuantity() <= 0) {
-                    throw new BusinessException("Quantity must be positive.");
-                }
-
                 Product product = takeOrderLine.getProduct();
 
                 OrderLine orderLine = new OrderLine(
@@ -87,6 +97,34 @@ public class TakeOrderManager {
 
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to create order.", e);
+        }
+    }
+
+    private void validateTakeOrderLines(List<TakeOrderLine> lines) throws BusinessException {
+        for (TakeOrderLine takeOrderLine : lines) {
+            if (takeOrderLine == null) {
+                throw new BusinessException("An order line cannot be null.");
+            }
+
+            if (takeOrderLine.getProduct() == null) {
+                throw new BusinessException("A selected product is missing.");
+            }
+
+            if (takeOrderLine.getProduct().getId() <= 0) {
+                throw new BusinessException("Product id must be positive.");
+            }
+
+            if (takeOrderLine.getProduct().getName() == null || takeOrderLine.getProduct().getName().isBlank()) {
+                throw new BusinessException("Product name is required.");
+            }
+
+            if (takeOrderLine.getProduct().getPrice() < 0) {
+                throw new BusinessException("Product price cannot be negative.");
+            }
+
+            if (takeOrderLine.getQuantity() <= 0) {
+                throw new BusinessException("Quantity must be positive.");
+            }
         }
     }
 }

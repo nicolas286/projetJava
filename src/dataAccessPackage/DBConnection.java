@@ -9,9 +9,12 @@ public class DBConnection {
     private static DBConnection instance;
     private final Connection connection;
 
-    private final String URL = "jdbc:mysql://localhost:3306/projet_java";
-    private final String USER = "root";
-    private final String PASSWORD = "willylechat";
+    private static final String URL =
+            System.getProperty("db.url", "jdbc:mysql://localhost:3306/projet_java");
+    private static final String USER =
+            System.getProperty("db.user", "root");
+    private static final String PASSWORD =
+            System.getProperty("db.password", "willylechat");
 
     private DBConnection() throws SQLException {
         try {
@@ -21,7 +24,7 @@ public class DBConnection {
         }
     }
 
-    public static DBConnection getInstance() throws SQLException {
+    public static synchronized DBConnection getInstance() throws SQLException {
         if (instance == null) {
             instance = new DBConnection();
         }

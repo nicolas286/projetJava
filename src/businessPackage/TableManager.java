@@ -13,12 +13,19 @@ public class TableManager {
     private final TableDataAccess tableDataAccess;
 
     public TableManager() {
-        this.tableDataAccess = new TableDBAccess();
+        this(new TableDBAccess());
+    }
+
+    public TableManager(TableDataAccess tableDataAccess) {
+        if (tableDataAccess == null) {
+            throw new IllegalArgumentException("TableDataAccess cannot be null.");
+        }
+        this.tableDataAccess = tableDataAccess;
     }
 
     public List<RestaurantTable> getAllTables() throws BusinessException {
         try {
-            return tableDataAccess.getAllTables();
+            return tableDataAccess.findAll();
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to retrieve tables.", e);
         }
@@ -30,7 +37,7 @@ public class TableManager {
         }
 
         try {
-            return tableDataAccess.getTableById(id);
+            return tableDataAccess.findById(id);
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to retrieve table.", e);
         }
