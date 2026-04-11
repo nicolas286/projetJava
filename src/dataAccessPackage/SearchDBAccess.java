@@ -86,6 +86,7 @@ public class SearchDBAccess extends AbstractDAO implements SearchDataAccess {
             return results;
         } catch (SQLException e) {
             throw new DataAccessException("Error while searching orders by table.", e);
+            // throw new DataAccessException("Error while searching orders by table id " + tableId + ".", e);
         }
     }
 
@@ -144,6 +145,7 @@ public class SearchDBAccess extends AbstractDAO implements SearchDataAccess {
             return results;
         } catch (SQLException e) {
             throw new DataAccessException("Error while searching product/category/constraint.", e);
+            // throw new DataAccessException("Error while searching product/category/constraint for productId " + productId + " and productName " + productName + ".", e);
         }
     }
 
@@ -188,6 +190,7 @@ public class SearchDBAccess extends AbstractDAO implements SearchDataAccess {
             return results;
         } catch (SQLException e) {
             throw new DataAccessException("Error while searching lot/storage/product.", e);
+            // throw new DataAccessException("Error while searching lot/storage/product for lot id " + lotId + ".", e);
         }
     }
 }
