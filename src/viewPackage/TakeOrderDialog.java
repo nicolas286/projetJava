@@ -3,9 +3,9 @@ package viewPackage;
 import controllerPackage.TableController;
 import controllerPackage.TakeOrderController;
 import exceptionPackage.BusinessException;
-import modelPackage.Product;
-import modelPackage.RestaurantTable;
-import modelPackage.TakeOrderLine;
+import modelPackage.entity.Product;
+import modelPackage.entity.RestaurantTable;
+import modelPackage.input.TakeOrderLine;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

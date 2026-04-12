@@ -2,8 +2,8 @@ package controllerPackage;
 
 import businessPackage.TakeOrderManager;
 import exceptionPackage.BusinessException;
-import modelPackage.Product;
-import modelPackage.TakeOrderLine;
+import modelPackage.entity.Product;
+import modelPackage.input.TakeOrderLine;
 
 import java.util.List;
 

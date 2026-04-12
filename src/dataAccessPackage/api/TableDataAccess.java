@@ -1,6 +1,6 @@
 package dataAccessPackage.api;
 
-import modelPackage.RestaurantTable;
+import modelPackage.entity.RestaurantTable;
 
 public interface TableDataAccess extends GenericDAO<RestaurantTable, Integer> {
 }

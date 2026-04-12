@@ -1,4 +1,4 @@
-package modelPackage;
+package modelPackage.entity;
 
 public class Product {
 
@@ -11,10 +11,10 @@ public class Product {
     }
 
     public Product(int id, String name, double price, int lotId) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.lotId = lotId;
+        setId(id);
+        setName(name);
+        setPrice(price);
+        setLotId(lotId);
     }
 
     public int getId() {

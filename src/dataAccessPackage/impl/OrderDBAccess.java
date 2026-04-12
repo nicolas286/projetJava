@@ -4,7 +4,8 @@ import dataAccessPackage.api.GenericDAO;
 import dataAccessPackage.api.OrderDataAccess;
 import dataAccessPackage.core.AbstractDataAccess;
 import exceptionPackage.DataAccessException;
-import modelPackage.Order;
+import modelPackage.entity.Order;
+import modelPackage.enums.OrderStatus;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,7 +35,7 @@ public class OrderDBAccess extends AbstractDataAccess implements OrderDataAccess
                 statement.setNull(2, java.sql.Types.TIMESTAMP);
             }
 
-            statement.setString(3, order.getStatus());
+            statement.setString(3, order.getStatus().name());
             statement.setBoolean(4, order.isPaid());
             statement.setInt(5, order.getTableId());
 
@@ -74,7 +75,7 @@ public class OrderDBAccess extends AbstractDataAccess implements OrderDataAccess
                 statement.setNull(2, java.sql.Types.TIMESTAMP);
             }
 
-            statement.setString(3, order.getStatus());
+            statement.setString(3, order.getStatus().name());
             statement.setBoolean(4, order.isPaid());
             statement.setInt(5, order.getTableId());
 
@@ -216,7 +217,7 @@ public class OrderDBAccess extends AbstractDataAccess implements OrderDataAccess
                 resultSet.getTimestamp("dateOrdered").toLocalDateTime(),
                 dateCompleted,
                 dateDelivered,
-                resultSet.getString("status"),
+                OrderStatus.valueOf(resultSet.getString("status")),
                 resultSet.getBoolean("isPaid"),
                 resultSet.getInt("table")
         );

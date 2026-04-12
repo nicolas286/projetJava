@@ -4,7 +4,7 @@ import dataAccessPackage.api.GenericDAO;
 import dataAccessPackage.api.OrderLineDataAccess;
 import dataAccessPackage.core.AbstractDataAccess;
 import exceptionPackage.DataAccessException;
-import modelPackage.OrderLine;
+import modelPackage.entity.OrderLine;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -4,7 +4,7 @@ import dataAccessPackage.api.GenericDAO;
 import dataAccessPackage.api.ProductDataAccess;
 import dataAccessPackage.core.AbstractDataAccess;
 import exceptionPackage.DataAccessException;
-import modelPackage.Product;
+import modelPackage.entity.Product;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

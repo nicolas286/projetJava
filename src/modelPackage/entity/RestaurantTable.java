@@ -1,4 +1,4 @@
-package modelPackage;
+package modelPackage.entity;
 
 import java.util.Objects;
 
@@ -14,12 +14,12 @@ public class RestaurantTable {
     }
 
     public RestaurantTable(int id, int positionX, int positionY, Integer floor, int capacity, boolean active) {
-        this.id = id;
-        this.positionX = positionX;
-        this.positionY = positionY;
-        this.floor = floor;
-        this.capacity = capacity;
-        this.active = active;
+        setId(id);
+        setPositionX(positionX);
+        setPositionY(positionY);
+        setFloor(floor);
+        setCapacity(capacity);
+        setActive(active);
     }
 
     public int getId() {

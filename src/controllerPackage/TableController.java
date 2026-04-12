@@ -2,7 +2,7 @@ package controllerPackage;
 
 import businessPackage.TableManager;
 import exceptionPackage.BusinessException;
-import modelPackage.RestaurantTable;
+import modelPackage.entity.RestaurantTable;
 
 import java.util.List;
 

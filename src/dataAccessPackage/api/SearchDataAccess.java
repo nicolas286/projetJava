@@ -1,9 +1,9 @@
 package dataAccessPackage.api;
 
 import exceptionPackage.DataAccessException;
-import modelPackage.LotStorageProductSearchResult;
-import modelPackage.ProductCategoryConstraintSearchResult;
-import modelPackage.TableOrderLineSearchResult;
+import modelPackage.search.LotStorageProductSearchResult;
+import modelPackage.search.ProductCategoryConstraintSearchResult;
+import modelPackage.search.TableOrderLineSearchResult;
 
 import java.util.List;
 

@@ -8,10 +8,11 @@ import dataAccessPackage.impl.ProductDBAccess;
 import dataAccessPackage.api.ProductDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
-import modelPackage.Order;
-import modelPackage.OrderLine;
-import modelPackage.Product;
-import modelPackage.TakeOrderLine;
+import modelPackage.entity.Order;
+import modelPackage.entity.OrderLine;
+import modelPackage.entity.Product;
+import modelPackage.enums.OrderStatus;
+import modelPackage.input.TakeOrderLine;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -69,7 +70,7 @@ public class TakeOrderManager {
                     LocalDateTime.now(),
                     null,
                     null,
-                    "ORDERED",
+                    OrderStatus.ORDERED,
                     false,
                     tableId
             );

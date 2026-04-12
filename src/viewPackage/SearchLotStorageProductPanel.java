@@ -2,7 +2,7 @@ package viewPackage;
 
 import controllerPackage.SearchController;
 import exceptionPackage.BusinessException;
-import modelPackage.LotStorageProductSearchResult;
+import modelPackage.search.LotStorageProductSearchResult;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

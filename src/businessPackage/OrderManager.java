@@ -4,7 +4,7 @@ import dataAccessPackage.impl.OrderDBAccess;
 import dataAccessPackage.api.OrderDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
-import modelPackage.Order;
+import modelPackage.entity.Order;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -101,7 +101,7 @@ public class OrderManager {
             throw new BusinessException("Date ordered is required.");
         }
 
-        if (order.getStatus() == null || order.getStatus().isBlank()) {
+        if (order.getStatus() == null) {
             throw new BusinessException("Status is required.");
         }
 

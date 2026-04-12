@@ -1,4 +1,4 @@
-package modelPackage;
+package modelPackage.entity;
 
 import java.util.Objects;
 
@@ -15,12 +15,12 @@ public class OrderLine {
     }
 
     public OrderLine(int number, int orderId, String nameSnapshot, double priceSnapshot, int productId, int quantity) {
-        this.number = number;
-        this.orderId = orderId;
-        this.nameSnapshot = nameSnapshot;
-        this.priceSnapshot = priceSnapshot;
-        this.productId = productId;
-        this.quantity = quantity;
+        setNumber(number);
+        setOrderId(orderId);
+        setNameSnapshot(nameSnapshot);
+        setPriceSnapshot(priceSnapshot);
+        setProductId(productId);
+        setQuantity(quantity);
     }
 
     public int getNumber() {
@@ -99,6 +99,13 @@ public class OrderLine {
         private final int orderId;
 
         public OrderLineId(int number, int orderId) {
+            if (number <= 0) {
+                throw new IllegalArgumentException("Line number must be positive.");
+            }
+            if (orderId <= 0) {
+                throw new IllegalArgumentException("Order id must be positive.");
+            }
+
             this.number = number;
             this.orderId = orderId;
         }

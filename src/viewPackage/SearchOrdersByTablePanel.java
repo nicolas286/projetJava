@@ -2,7 +2,7 @@ package viewPackage;
 
 import controllerPackage.SearchController;
 import exceptionPackage.BusinessException;
-import modelPackage.TableOrderLineSearchResult;
+import modelPackage.search.TableOrderLineSearchResult;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

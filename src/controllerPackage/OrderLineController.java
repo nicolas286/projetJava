@@ -2,7 +2,7 @@ package controllerPackage;
 
 import businessPackage.OrderLineManager;
 import exceptionPackage.BusinessException;
-import modelPackage.OrderLine;
+import modelPackage.entity.OrderLine;
 
 import java.util.List;
 

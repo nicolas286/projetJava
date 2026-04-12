@@ -4,7 +4,7 @@ import dataAccessPackage.impl.TableDBAccess;
 import dataAccessPackage.api.TableDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
-import modelPackage.RestaurantTable;
+import modelPackage.entity.RestaurantTable;
 
 import java.util.List;
 

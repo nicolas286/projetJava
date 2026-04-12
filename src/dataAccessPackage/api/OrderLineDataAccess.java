@@ -1,7 +1,7 @@
 package dataAccessPackage.api;
 
 import exceptionPackage.DataAccessException;
-import modelPackage.OrderLine;
+import modelPackage.entity.OrderLine;
 
 import java.util.List;
 

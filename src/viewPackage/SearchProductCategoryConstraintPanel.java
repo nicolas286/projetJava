@@ -2,7 +2,7 @@ package viewPackage;
 
 import controllerPackage.SearchController;
 import exceptionPackage.BusinessException;
-import modelPackage.ProductCategoryConstraintSearchResult;
+import modelPackage.search.ProductCategoryConstraintSearchResult;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

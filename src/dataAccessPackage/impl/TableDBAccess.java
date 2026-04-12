@@ -4,7 +4,7 @@ import dataAccessPackage.api.GenericDAO;
 import dataAccessPackage.api.TableDataAccess;
 import dataAccessPackage.core.AbstractDataAccess;
 import exceptionPackage.DataAccessException;
-import modelPackage.RestaurantTable;
+import modelPackage.entity.RestaurantTable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -1,4 +1,6 @@
-package modelPackage;
+package modelPackage.entity;
+
+import modelPackage.enums.OrderStatus;
 
 import java.time.LocalDateTime;
 
@@ -8,7 +10,7 @@ public class Order {
     private LocalDateTime dateOrdered;
     private LocalDateTime dateCompleted;
     private LocalDateTime dateDelivered;
-    private String status;
+    private OrderStatus status;
     private boolean paid;
     private int tableId;
 
@@ -16,14 +18,14 @@ public class Order {
     }
 
     public Order(int id, LocalDateTime dateOrdered, LocalDateTime dateCompleted,
-                 LocalDateTime dateDelivered, String status, boolean paid, int tableId) {
-        this.id = id;
-        this.dateOrdered = dateOrdered;
-        this.dateCompleted = dateCompleted;
-        this.dateDelivered = dateDelivered;
-        this.status = status;
-        this.paid = paid;
-        this.tableId = tableId;
+                 LocalDateTime dateDelivered, OrderStatus status, boolean paid, int tableId) {
+        setId(id);
+        setDateOrdered(dateOrdered);
+        setDateCompleted(dateCompleted);
+        setDateDelivered(dateDelivered);
+        setStatus(status);
+        setPaid(paid);
+        setTableId(tableId);
     }
 
     public int getId() {
@@ -31,6 +33,9 @@ public class Order {
     }
 
     public void setId(int id) {
+        if (id < 0) {
+            throw new IllegalArgumentException("Order id cannot be negative.");
+        }
         this.id = id;
     }
 
@@ -39,6 +44,9 @@ public class Order {
     }
 
     public void setDateOrdered(LocalDateTime dateOrdered) {
+        if (dateOrdered == null) {
+            throw new IllegalArgumentException("Date ordered is required.");
+        }
         this.dateOrdered = dateOrdered;
     }
 
@@ -58,11 +66,14 @@ public class Order {
         this.dateDelivered = dateDelivered;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(OrderStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("Status is required.");
+        }
         this.status = status;
     }
 
@@ -79,6 +90,9 @@ public class Order {
     }
 
     public void setTableId(int tableId) {
+        if (tableId <= 0) {
+            throw new IllegalArgumentException("Table id must be positive.");
+        }
         this.tableId = tableId;
     }
 }

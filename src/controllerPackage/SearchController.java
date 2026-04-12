@@ -2,9 +2,9 @@ package controllerPackage;
 
 import businessPackage.SearchManager;
 import exceptionPackage.BusinessException;
-import modelPackage.LotStorageProductSearchResult;
-import modelPackage.ProductCategoryConstraintSearchResult;
-import modelPackage.TableOrderLineSearchResult;
+import modelPackage.search.LotStorageProductSearchResult;
+import modelPackage.search.ProductCategoryConstraintSearchResult;
+import modelPackage.search.TableOrderLineSearchResult;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package controllerPackage;
 
 import businessPackage.OrderManager;
 import exceptionPackage.BusinessException;
-import modelPackage.Order;
+import modelPackage.entity.Order;
 
 import java.util.List;
 

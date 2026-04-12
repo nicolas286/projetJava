@@ -2,7 +2,7 @@ package viewPackage;
 
 import controllerPackage.OrderController;
 import exceptionPackage.BusinessException;
-import modelPackage.Order;
+import modelPackage.entity.Order;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

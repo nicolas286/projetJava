@@ -1,7 +1,7 @@
 package dataAccessPackage.api;
 
 import exceptionPackage.DataAccessException;
-import modelPackage.Product;
+import modelPackage.entity.Product;
 
 import java.util.List;
 

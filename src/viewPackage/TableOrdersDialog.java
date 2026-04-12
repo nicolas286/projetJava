@@ -2,8 +2,8 @@ package viewPackage;
 
 import controllerPackage.OrderController;
 import exceptionPackage.BusinessException;
-import modelPackage.Order;
-import modelPackage.RestaurantTable;
+import modelPackage.entity.Order;
+import modelPackage.entity.RestaurantTable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

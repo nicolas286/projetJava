@@ -1,4 +1,4 @@
-package modelPackage;
+package modelPackage.search;
 
 import java.time.LocalDateTime;
 

@@ -4,7 +4,7 @@ import dataAccessPackage.impl.OrderLineDBAccess;
 import dataAccessPackage.api.OrderLineDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
-import modelPackage.OrderLine;
+import modelPackage.entity.OrderLine;
 
 import java.util.List;
 

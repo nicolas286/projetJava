@@ -2,7 +2,7 @@ package viewPackage;
 
 import controllerPackage.TableController;
 import exceptionPackage.BusinessException;
-import modelPackage.RestaurantTable;
+import modelPackage.entity.RestaurantTable;
 
 import javax.swing.*;
 import java.awt.*;

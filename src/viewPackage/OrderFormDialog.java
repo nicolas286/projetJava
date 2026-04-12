@@ -3,8 +3,9 @@ package viewPackage;
 import controllerPackage.OrderController;
 import controllerPackage.TableController;
 import exceptionPackage.BusinessException;
-import modelPackage.Order;
-import modelPackage.RestaurantTable;
+import modelPackage.entity.Order;
+import modelPackage.enums.OrderStatus;
+import modelPackage.entity.RestaurantTable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +21,7 @@ public class OrderFormDialog extends JDialog {
 
     private JTextField dateOrderedField;
     private JTextField dateCompletedField;
-    private JComboBox<String> statusComboBox;
+    private JComboBox<OrderStatus> statusComboBox;
     private JCheckBox paidCheckBox;
     private JComboBox<RestaurantTable> tableComboBox;
     private JTextField dateDeliveredField;
@@ -53,9 +54,7 @@ public class OrderFormDialog extends JDialog {
 
         dateOrderedField = new JTextField();
         dateCompletedField = new JTextField();
-        statusComboBox = new JComboBox<>(new String[]{
-                "ORDERED", "IN_PREPARATION", "READY", "DELIVERED", "CANCELLED"
-        });
+        statusComboBox = new JComboBox<>(OrderStatus.values());
         paidCheckBox = new JCheckBox("Paid");
         tableComboBox = new JComboBox<>();
         dateDeliveredField = new JTextField();
@@ -146,7 +145,7 @@ public class OrderFormDialog extends JDialog {
                 dateCompleted = LocalDateTime.parse(dateCompletedField.getText().trim());
             }
 
-            String status = (String) statusComboBox.getSelectedItem();
+            OrderStatus status = (OrderStatus) statusComboBox.getSelectedItem();
             boolean isPaid = paidCheckBox.isSelected();
 
             RestaurantTable selectedTable = (RestaurantTable) tableComboBox.getSelectedItem();
