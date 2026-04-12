@@ -1,7 +1,6 @@
 package viewPackage.Orders.Dialogs;
 
-import controllerPackage.TableController;
-import controllerPackage.TakeOrderController;
+import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import exceptionPackage.ValidationException;
 import modelPackage.entity.Product;
@@ -16,8 +15,7 @@ import java.util.List;
 
 public class TakeOrderDialog extends JDialog {
 
-    private final TakeOrderController takeOrderController;
-    private final TableController tableController;
+    private final RestaurantController restaurantController;
     private boolean saved;
 
     private JComboBox<RestaurantTable> tableComboBox;
@@ -30,9 +28,16 @@ public class TakeOrderDialog extends JDialog {
     private final List<TakeOrderLine> lines;
 
     public TakeOrderDialog(JFrame parent) {
+        this(parent, new RestaurantController());
+    }
+
+    public TakeOrderDialog(JFrame parent, RestaurantController restaurantController) {
         super(parent, "Take Order", true);
-        this.takeOrderController = new TakeOrderController();
-        this.tableController = new TableController();
+        if (restaurantController == null) {
+            throw new IllegalArgumentException("RestaurantController cannot be null.");
+        }
+
+        this.restaurantController = restaurantController;
         this.saved = false;
         this.lines = new ArrayList<>();
 
@@ -41,8 +46,8 @@ public class TakeOrderDialog extends JDialog {
         loadProducts();
     }
 
-    public TakeOrderDialog(JFrame parent, RestaurantTable preselectedTable) {
-        this(parent);
+    public TakeOrderDialog(JFrame parent, RestaurantController restaurantController, RestaurantTable preselectedTable) {
+        this(parent, restaurantController);
         selectTableById(preselectedTable.getId());
         tableComboBox.setEnabled(false);
     }
@@ -102,7 +107,7 @@ public class TakeOrderDialog extends JDialog {
 
     private void loadTables() {
         try {
-            List<RestaurantTable> tables = tableController.getAllTables();
+            List<RestaurantTable> tables = restaurantController.getAllTables();
             DefaultComboBoxModel<RestaurantTable> comboBoxModel = new DefaultComboBoxModel<>();
 
             for (RestaurantTable table : tables) {
@@ -125,7 +130,7 @@ public class TakeOrderDialog extends JDialog {
 
     private void loadProducts() {
         try {
-            List<Product> products = takeOrderController.getAvailableProducts();
+            List<Product> products = restaurantController.getAvailableProducts();
             DefaultComboBoxModel<Product> comboBoxModel = new DefaultComboBoxModel<>();
 
             for (Product product : products) {
@@ -207,7 +212,17 @@ public class TakeOrderDialog extends JDialog {
                 return;
             }
 
-            takeOrderController.takeOrder(selectedTable.getId(), lines);
+            if (lines.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Please add at least one line.",
+                        "Validation error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            restaurantController.takeOrder(selectedTable.getId(), lines);
 
             saved = true;
             JOptionPane.showMessageDialog(

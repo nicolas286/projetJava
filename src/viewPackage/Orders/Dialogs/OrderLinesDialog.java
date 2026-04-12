@@ -1,6 +1,7 @@
 package viewPackage.Orders.Dialogs;
 
 import controllerPackage.OrderController;
+import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.OrderLine;
 
@@ -12,14 +13,14 @@ import java.util.List;
 public class OrderLinesDialog extends JDialog {
 
     private final int orderId;
-    private final OrderController orderController;
+    private final RestaurantController restaurantController;
     private JTable linesTable;
     private DefaultTableModel tableModel;
 
-    public OrderLinesDialog(JFrame parent, int orderId) {
+    public OrderLinesDialog(JFrame parent, int orderId, RestaurantController restaurantController) {
         super(parent, "Order Lines - Order " + orderId, true);
         this.orderId = orderId;
-        this.orderController = new OrderController();
+        this.restaurantController = restaurantController;
 
         buildInterface();
         loadLines();
@@ -57,7 +58,7 @@ public class OrderLinesDialog extends JDialog {
 
     private void loadLines() {
         try {
-            List<OrderLine> lines = orderController.getOrderLinesByOrderId(orderId);
+            List<OrderLine> lines = restaurantController.getOrderLinesByOrderId(orderId);
             tableModel.setRowCount(0);
 
             for (OrderLine line : lines) {

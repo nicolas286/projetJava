@@ -1,6 +1,7 @@
 package viewPackage.RoomPlan;
 
-import controllerPackage.TableController;
+import controllerPackage.OrderController;
+import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.RestaurantTable;
 import viewPackage.MainFrame;
@@ -12,12 +13,14 @@ import java.util.List;
 public class RoomPlanPanel extends JPanel {
 
     private final MainFrame parentFrame;
-    private final TableController tableController;
+    private final OrderController orderController;
+    private final RestaurantController restaurantController;
     private JPanel gridPanel;
 
-    public RoomPlanPanel(MainFrame parentFrame, TableController tableController) {
+    public RoomPlanPanel(MainFrame parentFrame, OrderController orderController, RestaurantController restaurantController) {
         this.parentFrame = parentFrame;
-        this.tableController = tableController;
+        this.orderController = orderController;
+        this.restaurantController = restaurantController;
 
         buildInterface();
         loadTables();
@@ -47,7 +50,7 @@ public class RoomPlanPanel extends JPanel {
 
     private void loadTables() {
         try {
-            List<RestaurantTable> tables = tableController.getAllTables();
+            List<RestaurantTable> tables = restaurantController.getAllTables();
             gridPanel.removeAll();
 
             for (RestaurantTable table : tables) {
@@ -80,7 +83,7 @@ public class RoomPlanPanel extends JPanel {
     }
 
     private void openTableOrders(RestaurantTable table) {
-        TableOrdersDialog dialog = new TableOrdersDialog(parentFrame, table);
+        TableOrdersDialog dialog = new TableOrdersDialog(parentFrame, table, orderController, restaurantController);
         dialog.setVisible(true);
     }
 }

@@ -1,7 +1,7 @@
 package viewPackage.Orders.Dialogs;
 
 import controllerPackage.OrderController;
-import controllerPackage.TableController;
+import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.Order;
 import modelPackage.enums.OrderStatus;
@@ -15,7 +15,7 @@ import java.util.List;
 public class OrderFormDialog extends JDialog {
 
     private final OrderController orderController;
-    private final TableController tableController;
+    private final RestaurantController restaurantController;
     private final Order existingOrder;
     private boolean saved;
 
@@ -26,14 +26,14 @@ public class OrderFormDialog extends JDialog {
     private JComboBox<RestaurantTable> tableComboBox;
     private JTextField dateDeliveredField;
 
-    public OrderFormDialog(JFrame parent, OrderController orderController) {
-        this(parent, orderController, null);
+    public OrderFormDialog(JFrame parent, OrderController orderController, RestaurantController restaurantController) {
+        this(parent, orderController, restaurantController, null);
     }
 
-    public OrderFormDialog(JFrame parent, OrderController orderController, Order existingOrder) {
+    public OrderFormDialog(JFrame parent, OrderController orderController, RestaurantController restaurantController, Order existingOrder) {
         super(parent, existingOrder == null ? "Add Order" : "Edit Order", true);
         this.orderController = orderController;
-        this.tableController = new TableController();
+        this.restaurantController = restaurantController;
         this.existingOrder = existingOrder;
         this.saved = false;
 
@@ -93,7 +93,7 @@ public class OrderFormDialog extends JDialog {
 
     private void loadTables() {
         try {
-            List<RestaurantTable> tables = tableController.getAllTables();
+            List<RestaurantTable> tables = restaurantController.getAllTables();
             DefaultComboBoxModel<RestaurantTable> comboBoxModel = new DefaultComboBoxModel<>();
 
             for (RestaurantTable table : tables) {

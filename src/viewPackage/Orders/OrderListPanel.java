@@ -1,6 +1,7 @@
 package viewPackage.Orders;
 
 import controllerPackage.OrderController;
+import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.Order;
 import viewPackage.MainFrame;
@@ -17,12 +18,14 @@ public class OrderListPanel extends JPanel {
 
     private final MainFrame parentFrame;
     private final OrderController orderController;
+    private final RestaurantController restaurantController;
     private JTable ordersTable;
     private DefaultTableModel tableModel;
 
-    public OrderListPanel(MainFrame parentFrame, OrderController orderController) {
+    public OrderListPanel(MainFrame parentFrame, OrderController orderController, RestaurantController restaurantController) {
         this.parentFrame = parentFrame;
         this.orderController = orderController;
+        this.restaurantController = restaurantController;
 
         buildInterface();
         loadOrders();
@@ -77,7 +80,7 @@ public class OrderListPanel extends JPanel {
 
     private void loadOrders() {
         try {
-            List<Order> orders = orderController.getAllOrders();
+            List<Order> orders = restaurantController.getAllOrders();
             tableModel.setRowCount(0);
 
             for (Order order : orders) {
@@ -98,7 +101,7 @@ public class OrderListPanel extends JPanel {
     }
 
     private void openAddDialog() {
-        OrderFormDialog dialog = new OrderFormDialog(parentFrame, orderController);
+        OrderFormDialog dialog = new OrderFormDialog(parentFrame, orderController, restaurantController);
         dialog.setVisible(true);
 
         if (dialog.isSaved()) {
@@ -116,14 +119,14 @@ public class OrderListPanel extends JPanel {
 
         try {
             int orderId = (Integer) tableModel.getValueAt(selectedRow, 0);
-            Order order = orderController.getOrderById(orderId);
+            Order order = restaurantController.getOrderById(orderId);
 
             if (order == null) {
                 JOptionPane.showMessageDialog(this, "Selected order not found.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            OrderFormDialog dialog = new OrderFormDialog(parentFrame, orderController, order);
+            OrderFormDialog dialog = new OrderFormDialog(parentFrame, orderController, restaurantController, order);
             dialog.setVisible(true);
 
             if (dialog.isSaved()) {
@@ -180,7 +183,7 @@ public class OrderListPanel extends JPanel {
 
         int orderId = (Integer) tableModel.getValueAt(selectedRow, 0);
 
-        OrderLinesDialog dialog = new OrderLinesDialog(parentFrame, orderId);
+        OrderLinesDialog dialog = new OrderLinesDialog(parentFrame, orderId, restaurantController);
         dialog.setVisible(true);
     }
 }

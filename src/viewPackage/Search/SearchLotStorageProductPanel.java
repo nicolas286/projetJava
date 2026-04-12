@@ -1,6 +1,6 @@
 package viewPackage.Search;
 
-import controllerPackage.SearchController;
+import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.search.LotStorageProductSearchResult;
 import viewPackage.MainFrame;
@@ -13,15 +13,15 @@ import java.util.List;
 public class SearchLotStorageProductPanel extends JPanel {
 
     private final MainFrame parentFrame;
-    private final SearchController searchController;
+    private final RestaurantController restaurantController;
 
     private JTextField lotIdField;
     private JTable resultTable;
     private DefaultTableModel tableModel;
 
-    public SearchLotStorageProductPanel(MainFrame parentFrame) {
+    public SearchLotStorageProductPanel(MainFrame parentFrame, RestaurantController restaurantController) {
         this.parentFrame = parentFrame;
-        this.searchController = new SearchController();
+        this.restaurantController = restaurantController;
 
         buildInterface();
     }
@@ -63,7 +63,7 @@ public class SearchLotStorageProductPanel extends JPanel {
     private void search() {
         try {
             int lotId = Integer.parseInt(lotIdField.getText().trim());
-            List<LotStorageProductSearchResult> results = searchController.searchLotStorageProduct(lotId);
+            List<LotStorageProductSearchResult> results = restaurantController.searchLotStorageProduct(lotId);
 
             tableModel.setRowCount(0);
 

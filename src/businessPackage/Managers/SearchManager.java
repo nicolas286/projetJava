@@ -1,4 +1,4 @@
-package businessPackage;
+package businessPackage.Managers;
 
 import dataAccessPackage.impl.SearchDBAccess;
 import dataAccessPackage.api.SearchDataAccess;

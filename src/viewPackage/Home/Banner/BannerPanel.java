@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class BannerPanel extends JPanel {
 
-    private String message = "Welcome to Cafe & Restaurant Management   ";
+    private final String message = "Welcome to Cafe & Restaurant Management   ";
     private int offset = 0;
 
     public BannerPanel() {

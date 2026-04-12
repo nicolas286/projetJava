@@ -4,24 +4,24 @@ import java.time.LocalDateTime;
 
 public class TableOrderLineSearchResult {
 
-    private int tableId;
-    private int positionX;
-    private int positionY;
-    private Integer floor;
-    private int capacity;
-    private boolean active;
+    private final int tableId;
+    private final int positionX;
+    private final int positionY;
+    private final Integer floor;
+    private final int capacity;
+    private final boolean active;
 
-    private int orderId;
-    private LocalDateTime dateOrdered;
-    private LocalDateTime dateCompleted;
-    private LocalDateTime dateDelivered;
-    private String status;
+    private final int orderId;
+    private final LocalDateTime dateOrdered;
+    private final LocalDateTime dateCompleted;
+    private final LocalDateTime dateDelivered;
+    private final String status;
 
-    private int lineNumber;
-    private int productId;
-    private String nameSnapshot;
-    private double priceSnapshot;
-    private int quantity;
+    private final int lineNumber;
+    private final int productId;
+    private final String nameSnapshot;
+    private final double priceSnapshot;
+    private final int quantity;
 
     public TableOrderLineSearchResult(int tableId, int positionX, int positionY, Integer floor, int capacity, boolean active,
                                       int orderId, LocalDateTime dateOrdered, LocalDateTime dateCompleted,

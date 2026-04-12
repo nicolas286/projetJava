@@ -1,6 +1,6 @@
 package viewPackage.Search;
 
-import controllerPackage.SearchController;
+import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.search.TableOrderLineSearchResult;
 import viewPackage.MainFrame;
@@ -13,15 +13,15 @@ import java.util.List;
 public class SearchOrdersByTablePanel extends JPanel {
 
     private final MainFrame parentFrame;
-    private final SearchController searchController;
+    private final RestaurantController restaurantController;
 
     private JTextField tableIdField;
     private JTable resultTable;
     private DefaultTableModel tableModel;
 
-    public SearchOrdersByTablePanel(MainFrame parentFrame) {
+    public SearchOrdersByTablePanel(MainFrame parentFrame, RestaurantController restaurantController) {
         this.parentFrame = parentFrame;
-        this.searchController = new SearchController();
+        this.restaurantController = restaurantController;
 
         buildInterface();
     }
@@ -68,7 +68,7 @@ public class SearchOrdersByTablePanel extends JPanel {
     private void search() {
         try {
             int tableId = Integer.parseInt(tableIdField.getText().trim());
-            List<TableOrderLineSearchResult> results = searchController.searchOrdersByTableId(tableId);
+            List<TableOrderLineSearchResult> results = restaurantController.searchOrdersByTableId(tableId);
 
             tableModel.setRowCount(0);
 

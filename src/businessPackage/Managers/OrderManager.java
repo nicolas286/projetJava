@@ -1,4 +1,4 @@
-package businessPackage;
+package businessPackage.Managers;
 
 import dataAccessPackage.api.OrderDataAccess;
 import dataAccessPackage.impl.OrderDBAccess;
@@ -25,8 +25,6 @@ public class OrderManager {
         }
         this.orderDataAccess = orderDataAccess;
     }
-
-    // -------------------- ORDER --------------------
 
     public List<Order> getAllOrders() throws BusinessException {
         try {

@@ -1,6 +1,6 @@
 package viewPackage.Search;
 
-import controllerPackage.SearchController;
+import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.search.ProductCategoryConstraintSearchResult;
 import viewPackage.MainFrame;
@@ -13,16 +13,16 @@ import java.util.List;
 public class SearchProductCategoryConstraintPanel extends JPanel {
 
     private final MainFrame parentFrame;
-    private final SearchController searchController;
+    private final RestaurantController restaurantController;
 
     private JTextField productIdField;
     private JTextField productNameField;
     private JTable resultTable;
     private DefaultTableModel tableModel;
 
-    public SearchProductCategoryConstraintPanel(MainFrame parentFrame) {
+    public SearchProductCategoryConstraintPanel(MainFrame parentFrame, RestaurantController restaurantController) {
         this.parentFrame = parentFrame;
-        this.searchController = new SearchController();
+        this.restaurantController = restaurantController;
 
         buildInterface();
     }
@@ -76,7 +76,7 @@ public class SearchProductCategoryConstraintPanel extends JPanel {
             String productName = productNameField.getText().trim();
 
             List<ProductCategoryConstraintSearchResult> results =
-                    searchController.searchProductCategoryConstraint(productId, productName);
+                    restaurantController.searchProductCategoryConstraint(productId, productName);
 
             tableModel.setRowCount(0);
 

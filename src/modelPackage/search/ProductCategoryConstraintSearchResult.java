@@ -2,11 +2,11 @@ package modelPackage.search;
 
 public class ProductCategoryConstraintSearchResult {
 
-    private int productId;
-    private String productName;
-    private double productPrice;
-    private String categoryName;
-    private String constraintName;
+    private final int productId;
+    private final String productName;
+    private final double productPrice;
+    private final String categoryName;
+    private final String constraintName;
 
     public ProductCategoryConstraintSearchResult(int productId, String productName, double productPrice,
                                                  String categoryName, String constraintName) {

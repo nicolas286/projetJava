@@ -2,13 +2,13 @@ package modelPackage.search;
 
 public class LotStorageProductSearchResult {
 
-    private int lotId;
-    private int quantity;
-    private double price;
-    private int productId;
-    private String productName;
-    private int storageId;
-    private boolean refrigerated;
+    private final int lotId;
+    private final int quantity;
+    private final double price;
+    private final int productId;
+    private final String productName;
+    private final int storageId;
+    private final boolean refrigerated;
 
     public LotStorageProductSearchResult(int lotId, int quantity, double price,
                                          int productId, String productName,

@@ -1,6 +1,7 @@
 package viewPackage.RoomPlan;
 
 import controllerPackage.OrderController;
+import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.Order;
 import modelPackage.entity.RestaurantTable;
@@ -16,13 +17,24 @@ public class TableOrdersDialog extends JDialog {
 
     private final RestaurantTable restaurantTable;
     private final OrderController orderController;
+    private final RestaurantController restaurantController;
     private JTable ordersTable;
     private DefaultTableModel tableModel;
 
-    public TableOrdersDialog(JFrame parent, RestaurantTable restaurantTable) {
+    public TableOrdersDialog(JFrame parent,
+                             RestaurantTable restaurantTable,
+                             OrderController orderController,
+                             RestaurantController restaurantController) {
+
         super(parent, "Orders of " + restaurantTable, true);
+
+        if (orderController == null || restaurantController == null) {
+            throw new IllegalArgumentException("Controllers cannot be null.");
+        }
+
         this.restaurantTable = restaurantTable;
-        this.orderController = new OrderController();
+        this.orderController = orderController;
+        this.restaurantController = restaurantController;
 
         buildInterface();
         loadOrders();
@@ -67,7 +79,7 @@ public class TableOrdersDialog extends JDialog {
 
     private void loadOrders() {
         try {
-            List<Order> orders = orderController.getOrdersByTableId(restaurantTable.getId());
+            List<Order> orders = restaurantController.getOrdersByTableId(restaurantTable.getId());
             tableModel.setRowCount(0);
 
             for (Order order : orders) {
@@ -91,7 +103,7 @@ public class TableOrdersDialog extends JDialog {
     }
 
     private void openTakeOrderDialog() {
-        TakeOrderDialog dialog = new TakeOrderDialog((JFrame) getParent(), restaurantTable);
+        TakeOrderDialog dialog = new TakeOrderDialog((JFrame) getParent(), restaurantController);
         dialog.setVisible(true);
 
         if (dialog.isSaved()) {
@@ -114,7 +126,7 @@ public class TableOrdersDialog extends JDialog {
 
         int orderId = (Integer) tableModel.getValueAt(selectedRow, 0);
 
-        OrderLinesDialog dialog = new OrderLinesDialog((JFrame) getParent(), orderId);
+        OrderLinesDialog dialog = new OrderLinesDialog((JFrame) getParent(), orderId, restaurantController);
         dialog.setVisible(true);
     }
 }
