@@ -4,6 +4,8 @@ import exceptionPackage.DataAccessException;
 
 import java.util.List;
 
+/* Contrat commun à toutes les entités */
+
 public interface GenericDAO<T, ID> {
 
     void insert(T entity) throws DataAccessException;
