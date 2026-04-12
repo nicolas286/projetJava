@@ -27,6 +27,14 @@ public class RestaurantController {
         facade.takeOrder(tableId, lines);
     }
 
+    public void updateOrder(Order order) throws BusinessException, ValidationException {
+        facade.updateOrder(order);
+    }
+
+    public void deleteOrder(int id) throws BusinessException {
+        facade.deleteOrder(id);
+    }
+
     public List<Product> getAvailableProducts() throws BusinessException {
         return facade.getAvailableProducts();
     }

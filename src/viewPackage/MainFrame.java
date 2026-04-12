@@ -65,7 +65,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showOrdersView() {
-        setContentPane(new OrderListPanel(this, orderController, restaurantController));
+        setContentPane(new OrderListPanel(this, restaurantController));
         revalidate();
         repaint();
     }

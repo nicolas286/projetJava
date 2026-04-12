@@ -1,4 +1,4 @@
-package viewPackage.Orders.Dialogs;
+package viewPackage.Shared;
 
 import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;

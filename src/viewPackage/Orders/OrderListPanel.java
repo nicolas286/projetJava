@@ -1,13 +1,12 @@
 package viewPackage.Orders;
 
-import controllerPackage.OrderController;
 import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.Order;
 import viewPackage.MainFrame;
 import viewPackage.Orders.Dialogs.OrderFormDialog;
 import viewPackage.Orders.Dialogs.OrderLinesDialog;
-import viewPackage.Orders.Dialogs.TakeOrderDialog;
+import viewPackage.Shared.TakeOrderDialog;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -17,14 +16,12 @@ import java.util.List;
 public class OrderListPanel extends JPanel {
 
     private final MainFrame parentFrame;
-    private final OrderController orderController;
     private final RestaurantController restaurantController;
     private JTable ordersTable;
     private DefaultTableModel tableModel;
 
-    public OrderListPanel(MainFrame parentFrame, OrderController orderController, RestaurantController restaurantController) {
+    public OrderListPanel(MainFrame parentFrame, RestaurantController restaurantController) {
         this.parentFrame = parentFrame;
-        this.orderController = orderController;
         this.restaurantController = restaurantController;
 
         buildInterface();
@@ -48,7 +45,6 @@ public class OrderListPanel extends JPanel {
         ordersTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(ordersTable);
 
-        JButton addButton = new JButton("Add Order");
         JButton editButton = new JButton("Edit Selected");
         JButton deleteButton = new JButton("Delete Selected");
         JButton takeOrderButton = new JButton("Take Order");
@@ -56,7 +52,6 @@ public class OrderListPanel extends JPanel {
         JButton refreshButton = new JButton("Refresh");
         JButton backButton = new JButton("Back to Home");
 
-        addButton.addActionListener(e -> openAddDialog());
         editButton.addActionListener(e -> openEditDialog());
         deleteButton.addActionListener(e -> deleteSelectedOrder());
         takeOrderButton.addActionListener(e -> openTakeOrderDialog());
@@ -65,7 +60,6 @@ public class OrderListPanel extends JPanel {
         backButton.addActionListener(e -> parentFrame.showHomeView());
 
         JPanel southPanel = new JPanel();
-        southPanel.add(addButton);
         southPanel.add(editButton);
         southPanel.add(deleteButton);
         southPanel.add(takeOrderButton);
@@ -100,15 +94,6 @@ public class OrderListPanel extends JPanel {
         }
     }
 
-    private void openAddDialog() {
-        OrderFormDialog dialog = new OrderFormDialog(parentFrame, orderController, restaurantController);
-        dialog.setVisible(true);
-
-        if (dialog.isSaved()) {
-            loadOrders();
-        }
-    }
-
     private void openEditDialog() {
         int selectedRow = ordersTable.getSelectedRow();
 
@@ -121,12 +106,7 @@ public class OrderListPanel extends JPanel {
             int orderId = (Integer) tableModel.getValueAt(selectedRow, 0);
             Order order = restaurantController.getOrderById(orderId);
 
-            if (order == null) {
-                JOptionPane.showMessageDialog(this, "Selected order not found.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            OrderFormDialog dialog = new OrderFormDialog(parentFrame, orderController, restaurantController, order);
+            OrderFormDialog dialog = new OrderFormDialog(parentFrame, restaurantController, order);
             dialog.setVisible(true);
 
             if (dialog.isSaved()) {
@@ -156,7 +136,7 @@ public class OrderListPanel extends JPanel {
 
         if (choice == JOptionPane.YES_OPTION) {
             try {
-                orderController.deleteOrder(orderId);
+                restaurantController.deleteOrder(orderId);
                 loadOrders();
             } catch (BusinessException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -165,7 +145,7 @@ public class OrderListPanel extends JPanel {
     }
 
     private void openTakeOrderDialog() {
-        TakeOrderDialog dialog = new TakeOrderDialog(parentFrame);
+        TakeOrderDialog dialog = new TakeOrderDialog(parentFrame, restaurantController);
         dialog.setVisible(true);
 
         if (dialog.isSaved()) {

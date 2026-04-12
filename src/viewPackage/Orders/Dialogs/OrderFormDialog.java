@@ -1,11 +1,11 @@
 package viewPackage.Orders.Dialogs;
 
-import controllerPackage.OrderController;
 import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
+import exceptionPackage.ValidationException;
 import modelPackage.entity.Order;
-import modelPackage.enums.OrderStatus;
 import modelPackage.entity.RestaurantTable;
+import modelPackage.enums.OrderStatus;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +14,6 @@ import java.util.List;
 
 public class OrderFormDialog extends JDialog {
 
-    private final OrderController orderController;
     private final RestaurantController restaurantController;
     private final Order existingOrder;
     private boolean saved;
@@ -26,22 +25,23 @@ public class OrderFormDialog extends JDialog {
     private JComboBox<RestaurantTable> tableComboBox;
     private JTextField dateDeliveredField;
 
-    public OrderFormDialog(JFrame parent, OrderController orderController, RestaurantController restaurantController) {
-        this(parent, orderController, restaurantController, null);
-    }
+    public OrderFormDialog(JFrame parent, RestaurantController restaurantController, Order existingOrder) {
+        super(parent, "Edit Order", true);
 
-    public OrderFormDialog(JFrame parent, OrderController orderController, RestaurantController restaurantController, Order existingOrder) {
-        super(parent, existingOrder == null ? "Add Order" : "Edit Order", true);
-        this.orderController = orderController;
+        if (restaurantController == null) {
+            throw new IllegalArgumentException("RestaurantController cannot be null.");
+        }
+        if (existingOrder == null) {
+            throw new IllegalArgumentException("Existing order cannot be null.");
+        }
+
         this.restaurantController = restaurantController;
         this.existingOrder = existingOrder;
         this.saved = false;
 
         buildInterface();
         loadTables();
-        if (existingOrder != null) {
-            fillForm();
-        }
+        fillForm();
     }
 
     private void buildInterface() {
@@ -77,7 +77,7 @@ public class OrderFormDialog extends JDialog {
         formPanel.add(new JLabel("Date Delivered (optional):"));
         formPanel.add(dateDeliveredField);
 
-        JButton saveButton = new JButton(existingOrder == null ? "Save" : "Update");
+        JButton saveButton = new JButton("Update");
         JButton cancelButton = new JButton("Cancel");
 
         saveButton.addActionListener(e -> saveOrder());
@@ -159,17 +159,23 @@ public class OrderFormDialog extends JDialog {
                 dateDelivered = LocalDateTime.parse(dateDeliveredField.getText().trim());
             }
 
-            Order order;
-            if (existingOrder == null) {
-                order = new Order(0, dateOrdered, dateCompleted, dateDelivered, status, isPaid, selectedTable);
-                orderController.addOrder(order);
-            } else {
-                order = new Order(existingOrder.getId(), dateOrdered, dateCompleted, dateDelivered, status, isPaid, selectedTable);
-                orderController.updateOrder(order);
-            }
+            Order updatedOrder = new Order(
+                    existingOrder.getId(),
+                    dateOrdered,
+                    dateCompleted,
+                    dateDelivered,
+                    status,
+                    isPaid,
+                    selectedTable
+            );
+
+            restaurantController.updateOrder(updatedOrder);
 
             saved = true;
             dispose();
+
+        } catch (ValidationException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Validation error", JOptionPane.ERROR_MESSAGE);
         } catch (BusinessException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Business error", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
