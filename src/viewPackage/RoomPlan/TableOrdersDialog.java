@@ -1,9 +1,11 @@
-package viewPackage;
+package viewPackage.RoomPlan;
 
 import controllerPackage.OrderController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.Order;
 import modelPackage.entity.RestaurantTable;
+import viewPackage.Orders.Dialogs.OrderLinesDialog;
+import viewPackage.Orders.Dialogs.TakeOrderDialog;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

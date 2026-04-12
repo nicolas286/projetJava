@@ -1,6 +1,6 @@
-package viewPackage;
+package viewPackage.Orders.Dialogs;
 
-import controllerPackage.OrderLineController;
+import controllerPackage.OrderController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.OrderLine;
 
@@ -12,14 +12,14 @@ import java.util.List;
 public class OrderLinesDialog extends JDialog {
 
     private final int orderId;
-    private final OrderLineController orderLineController;
+    private final OrderController orderController;
     private JTable linesTable;
     private DefaultTableModel tableModel;
 
     public OrderLinesDialog(JFrame parent, int orderId) {
         super(parent, "Order Lines - Order " + orderId, true);
         this.orderId = orderId;
-        this.orderLineController = new OrderLineController();
+        this.orderController = new OrderController();
 
         buildInterface();
         loadLines();
@@ -33,7 +33,7 @@ public class OrderLinesDialog extends JDialog {
         JLabel titleLabel = new JLabel("Lines of order " + orderId, SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
 
-        String[] columnNames = {"Line No", "Product Name", "Unit Price", "Product Id", "Quantity", "Line Total"};
+        String[] columnNames = {"Line No", "Product Name", "Unit Price", "Product", "Quantity", "Line Total"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -57,7 +57,7 @@ public class OrderLinesDialog extends JDialog {
 
     private void loadLines() {
         try {
-            List<OrderLine> lines = orderLineController.getLinesByOrderId(orderId);
+            List<OrderLine> lines = orderController.getOrderLinesByOrderId(orderId);
             tableModel.setRowCount(0);
 
             for (OrderLine line : lines) {
@@ -65,7 +65,7 @@ public class OrderLinesDialog extends JDialog {
                         line.getNumber(),
                         line.getNameSnapshot(),
                         line.getPriceSnapshot(),
-                        line.getProductId(),
+                        line.getProduct().getName(),
                         line.getQuantity(),
                         line.getLineTotal()
                 };

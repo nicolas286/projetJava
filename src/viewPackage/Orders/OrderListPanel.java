@@ -1,8 +1,12 @@
-package viewPackage;
+package viewPackage.Orders;
 
 import controllerPackage.OrderController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.Order;
+import viewPackage.MainFrame;
+import viewPackage.Orders.Dialogs.OrderFormDialog;
+import viewPackage.Orders.Dialogs.OrderLinesDialog;
+import viewPackage.Orders.Dialogs.TakeOrderDialog;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -83,7 +87,7 @@ public class OrderListPanel extends JPanel {
                         order.getDateCompleted(),
                         order.getStatus(),
                         order.isPaid(),
-                        order.getTableId(),
+                        order.getTable(),
                         order.getDateDelivered()
                 };
                 tableModel.addRow(row);

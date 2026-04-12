@@ -1,8 +1,9 @@
-package viewPackage;
+package viewPackage.Search;
 
 import controllerPackage.SearchController;
 import exceptionPackage.BusinessException;
 import modelPackage.search.TableOrderLineSearchResult;
+import viewPackage.MainFrame;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

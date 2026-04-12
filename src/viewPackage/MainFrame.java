@@ -5,6 +5,13 @@ import controllerPackage.TableController;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import dataAccessPackage.core.DBConnection;
+import viewPackage.Home.HomePanel;
+import viewPackage.Orders.OrderListPanel;
+import viewPackage.RoomPlan.RoomPlanPanel;
+import viewPackage.Search.SearchLotStorageProductPanel;
+import viewPackage.Search.SearchOrdersByTablePanel;
+import viewPackage.Search.SearchProductCategoryConstraintPanel;
+
 import java.sql.SQLException;
 
 import javax.swing.*;

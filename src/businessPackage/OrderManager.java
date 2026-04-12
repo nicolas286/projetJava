@@ -1,10 +1,12 @@
 package businessPackage;
 
-import dataAccessPackage.impl.OrderDBAccess;
 import dataAccessPackage.api.OrderDataAccess;
+import dataAccessPackage.impl.OrderDBAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
+import exceptionPackage.ValidationException;
 import modelPackage.entity.Order;
+import modelPackage.entity.OrderLine;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +26,8 @@ public class OrderManager {
         this.orderDataAccess = orderDataAccess;
     }
 
+    // -------------------- ORDER --------------------
+
     public List<Order> getAllOrders() throws BusinessException {
         try {
             return orderDataAccess.findAll();
@@ -38,13 +42,19 @@ public class OrderManager {
         }
 
         try {
-            return orderDataAccess.findById(id);
+            Order order = orderDataAccess.findById(id);
+
+            if (order == null) {
+                throw new BusinessException("Order not found.");
+            }
+
+            return order;
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to retrieve order.", e);
         }
     }
 
-    public void addOrder(Order order) throws BusinessException {
+    public void addOrder(Order order) throws BusinessException, ValidationException {
         validateOrder(order);
 
         try {
@@ -54,7 +64,7 @@ public class OrderManager {
         }
     }
 
-    public void updateOrder(Order order) throws BusinessException {
+    public void updateOrder(Order order) throws BusinessException, ValidationException {
         validateOrder(order);
 
         if (order.getId() <= 0) {
@@ -92,21 +102,72 @@ public class OrderManager {
         }
     }
 
-    private void validateOrder(Order order) throws BusinessException {
+    // -------------------- ORDER LINES --------------------
+
+    public List<OrderLine> getOrderLinesByOrderId(int orderId) throws BusinessException {
+        return getOrderById(orderId).getOrderLines();
+    }
+
+    public OrderLine getOrderLineByNumber(int orderId, int lineNumber) throws BusinessException {
+        if (lineNumber <= 0) {
+            throw new BusinessException("Line number must be positive.");
+        }
+
+        Order order = getOrderById(orderId);
+
+        for (OrderLine line : order.getOrderLines()) {
+            if (line.getNumber() == lineNumber) {
+                return line;
+            }
+        }
+
+        return null;
+    }
+
+    public void addOrderLineToOrder(int orderId, OrderLine orderLine)
+            throws BusinessException, ValidationException {
+
+        if (orderLine == null) {
+            throw new ValidationException("Order line cannot be null.");
+        }
+
+        Order order = getOrderById(orderId);
+
+        order.addOrderLine(orderLine);
+        updateOrder(order);
+    }
+
+    public void removeOrderLineFromOrder(int orderId, int lineNumber)
+            throws BusinessException, ValidationException {
+
+        if (lineNumber <= 0) {
+            throw new BusinessException("Line number must be positive.");
+        }
+
+        Order order = getOrderById(orderId);
+
+        OrderLine toRemove = null;
+
+        for (OrderLine line : order.getOrderLines()) {
+            if (line.getNumber() == lineNumber) {
+                toRemove = line;
+                break;
+            }
+        }
+
+        if (toRemove == null) {
+            throw new BusinessException("Order line not found.");
+        }
+
+        order.removeOrderLine(toRemove);
+        updateOrder(order);
+    }
+
+    // -------------------- VALIDATION --------------------
+
+    private void validateOrder(Order order) throws ValidationException {
         if (order == null) {
-            throw new BusinessException("Order cannot be null.");
-        }
-
-        if (order.getDateOrdered() == null) {
-            throw new BusinessException("Date ordered is required.");
-        }
-
-        if (order.getStatus() == null) {
-            throw new BusinessException("Status is required.");
-        }
-
-        if (order.getTableId() <= 0) {
-            throw new BusinessException("Table id must be positive.");
+            throw new ValidationException("Order cannot be null.");
         }
 
         LocalDateTime ordered = order.getDateOrdered();
@@ -114,15 +175,15 @@ public class OrderManager {
         LocalDateTime delivered = order.getDateDelivered();
 
         if (completed != null && completed.isBefore(ordered)) {
-            throw new BusinessException("Date completed cannot be before date ordered.");
+            throw new ValidationException("Date completed cannot be before date ordered.");
         }
 
         if (delivered != null && delivered.isBefore(ordered)) {
-            throw new BusinessException("Date delivered cannot be before date ordered.");
+            throw new ValidationException("Date delivered cannot be before date ordered.");
         }
 
         if (completed != null && delivered != null && delivered.isBefore(completed)) {
-            throw new BusinessException("Date delivered cannot be before date completed.");
+            throw new ValidationException("Date delivered cannot be before date completed.");
         }
     }
 }

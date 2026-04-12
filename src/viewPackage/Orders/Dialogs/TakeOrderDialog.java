@@ -1,8 +1,9 @@
-package viewPackage;
+package viewPackage.Orders.Dialogs;
 
 import controllerPackage.TableController;
 import controllerPackage.TakeOrderController;
 import exceptionPackage.BusinessException;
+import exceptionPackage.ValidationException;
 import modelPackage.entity.Product;
 import modelPackage.entity.RestaurantTable;
 import modelPackage.input.TakeOrderLine;
@@ -54,17 +55,16 @@ public class TakeOrderDialog extends JDialog {
         JPanel formPanel = new JPanel(new GridLayout(2, 4, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-
         tableComboBox = new JComboBox<>();
         productComboBox = new JComboBox<>();
         quantitySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
-
 
         formPanel.add(new JLabel("Table:"));
         formPanel.add(tableComboBox);
 
         formPanel.add(new JLabel("Product:"));
         formPanel.add(productComboBox);
+
         formPanel.add(new JLabel("Quantity:"));
         formPanel.add(quantitySpinner);
 
@@ -161,24 +161,32 @@ public class TakeOrderDialog extends JDialog {
         int quantity = (Integer) quantitySpinner.getValue();
 
         if (selectedProduct == null) {
-            JOptionPane.showMessageDialog(this, "Please select a product.", "Validation error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please select a product.",
+                    "Validation error",
+                    JOptionPane.ERROR_MESSAGE
+            );
             return;
         }
 
         TakeOrderLine line = new TakeOrderLine(selectedProduct, quantity);
         lines.add(line);
 
+        double lineTotal = selectedProduct.getPrice() * quantity;
+
         Object[] row = {
                 selectedProduct.getName(),
                 selectedProduct.getPrice(),
                 quantity,
-                line.getLineTotal()
+                lineTotal
         };
         linesTableModel.addRow(row);
     }
 
     private void removeSelectedLine() {
         int selectedRow = linesTable.getSelectedRow();
+
         if (selectedRow >= 0) {
             lines.remove(selectedRow);
             linesTableModel.removeRow(selectedRow);
@@ -210,6 +218,13 @@ public class TakeOrderDialog extends JDialog {
             );
             dispose();
 
+        } catch (ValidationException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    e.getMessage(),
+                    "Validation error",
+                    JOptionPane.ERROR_MESSAGE
+            );
         } catch (BusinessException e) {
             JOptionPane.showMessageDialog(
                     this,

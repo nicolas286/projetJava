@@ -1,16 +1,18 @@
 package businessPackage;
 
-import dataAccessPackage.impl.OrderDBAccess;
 import dataAccessPackage.api.OrderDataAccess;
-import dataAccessPackage.impl.OrderLineDBAccess;
-import dataAccessPackage.api.OrderLineDataAccess;
-import dataAccessPackage.impl.ProductDBAccess;
 import dataAccessPackage.api.ProductDataAccess;
+import dataAccessPackage.api.TableDataAccess;
+import dataAccessPackage.impl.OrderDBAccess;
+import dataAccessPackage.impl.ProductDBAccess;
+import dataAccessPackage.impl.TableDBAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
+import exceptionPackage.ValidationException;
 import modelPackage.entity.Order;
 import modelPackage.entity.OrderLine;
 import modelPackage.entity.Product;
+import modelPackage.entity.RestaurantTable;
 import modelPackage.enums.OrderStatus;
 import modelPackage.input.TakeOrderLine;
 
@@ -21,28 +23,28 @@ public class TakeOrderManager {
 
     private final ProductDataAccess productDataAccess;
     private final OrderDataAccess orderDataAccess;
-    private final OrderLineDataAccess orderLineDataAccess;
+    private final TableDataAccess tableDataAccess;
 
     public TakeOrderManager() {
-        this(new ProductDBAccess(), new OrderDBAccess(), new OrderLineDBAccess());
+        this(new ProductDBAccess(), new OrderDBAccess(), new TableDBAccess());
     }
 
     public TakeOrderManager(ProductDataAccess productDataAccess,
                             OrderDataAccess orderDataAccess,
-                            OrderLineDataAccess orderLineDataAccess) {
+                            TableDataAccess tableDataAccess) {
         if (productDataAccess == null) {
             throw new IllegalArgumentException("ProductDataAccess cannot be null.");
         }
         if (orderDataAccess == null) {
             throw new IllegalArgumentException("OrderDataAccess cannot be null.");
         }
-        if (orderLineDataAccess == null) {
-            throw new IllegalArgumentException("OrderLineDataAccess cannot be null.");
+        if (tableDataAccess == null) {
+            throw new IllegalArgumentException("TableDataAccess cannot be null.");
         }
 
         this.productDataAccess = productDataAccess;
         this.orderDataAccess = orderDataAccess;
-        this.orderLineDataAccess = orderLineDataAccess;
+        this.tableDataAccess = tableDataAccess;
     }
 
     public List<Product> getAvailableProducts() throws BusinessException {
@@ -53,7 +55,9 @@ public class TakeOrderManager {
         }
     }
 
-    public void takeOrder(int tableId, List<TakeOrderLine> lines) throws BusinessException {
+    public void takeOrder(int tableId, List<TakeOrderLine> lines)
+            throws BusinessException, ValidationException {
+
         if (tableId <= 0) {
             throw new BusinessException("Table id must be positive.");
         }
@@ -65,6 +69,12 @@ public class TakeOrderManager {
         validateTakeOrderLines(lines);
 
         try {
+            RestaurantTable table = tableDataAccess.findById(tableId);
+
+            if (table == null) {
+                throw new BusinessException("Table not found.");
+            }
+
             Order order = new Order(
                     0,
                     LocalDateTime.now(),
@@ -72,59 +82,47 @@ public class TakeOrderManager {
                     null,
                     OrderStatus.ORDERED,
                     false,
-                    tableId
+                    table
             );
 
-            orderDataAccess.insert(order);
-
-            int orderId = order.getId();
             int lineNumber = 1;
 
             for (TakeOrderLine takeOrderLine : lines) {
-                Product product = takeOrderLine.getProduct();
-
-                OrderLine orderLine = new OrderLine(
-                        lineNumber,
-                        orderId,
-                        product.getName(),
-                        product.getPrice(),
-                        product.getId(),
-                        takeOrderLine.getQuantity()
-                );
-
-                orderLineDataAccess.insert(orderLine);
+                order.addOrderLine(toOrderLine(lineNumber, takeOrderLine));
                 lineNumber++;
             }
+
+            orderDataAccess.insert(order);
 
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to create order.", e);
         }
     }
 
-    private void validateTakeOrderLines(List<TakeOrderLine> lines) throws BusinessException {
+    private OrderLine toOrderLine(int lineNumber, TakeOrderLine takeOrderLine) {
+        Product product = takeOrderLine.getProduct();
+
+        return new OrderLine(
+                lineNumber,
+                product,
+                product.getName(),
+                product.getPrice(),
+                takeOrderLine.getQuantity()
+        );
+    }
+
+    private void validateTakeOrderLines(List<TakeOrderLine> lines) throws ValidationException {
         for (TakeOrderLine takeOrderLine : lines) {
             if (takeOrderLine == null) {
-                throw new BusinessException("An order line cannot be null.");
+                throw new ValidationException("An order line cannot be null.");
             }
 
             if (takeOrderLine.getProduct() == null) {
-                throw new BusinessException("A selected product is missing.");
-            }
-
-            if (takeOrderLine.getProduct().getId() <= 0) {
-                throw new BusinessException("Product id must be positive.");
-            }
-
-            if (takeOrderLine.getProduct().getName() == null || takeOrderLine.getProduct().getName().isBlank()) {
-                throw new BusinessException("Product name is required.");
-            }
-
-            if (takeOrderLine.getProduct().getPrice() < 0) {
-                throw new BusinessException("Product price cannot be negative.");
+                throw new ValidationException("A selected product is missing.");
             }
 
             if (takeOrderLine.getQuantity() <= 0) {
-                throw new BusinessException("Quantity must be positive.");
+                throw new ValidationException("Quantity must be positive.");
             }
         }
     }

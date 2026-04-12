@@ -1,4 +1,7 @@
-package viewPackage;
+package viewPackage.Home;
+
+import viewPackage.Home.Banner.BannerPanel;
+import viewPackage.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;

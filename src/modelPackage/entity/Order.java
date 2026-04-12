@@ -3,6 +3,9 @@ package modelPackage.entity;
 import modelPackage.enums.OrderStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Order {
 
@@ -12,20 +15,23 @@ public class Order {
     private LocalDateTime dateDelivered;
     private OrderStatus status;
     private boolean paid;
-    private int tableId;
+    private RestaurantTable table;
+    private final List<OrderLine> orderLines;
 
     public Order() {
+        this.orderLines = new ArrayList<>();
     }
 
     public Order(int id, LocalDateTime dateOrdered, LocalDateTime dateCompleted,
-                 LocalDateTime dateDelivered, OrderStatus status, boolean paid, int tableId) {
+                 LocalDateTime dateDelivered, OrderStatus status, boolean paid, RestaurantTable table) {
+        this();
         setId(id);
         setDateOrdered(dateOrdered);
         setDateCompleted(dateCompleted);
         setDateDelivered(dateDelivered);
         setStatus(status);
         setPaid(paid);
-        setTableId(tableId);
+        setTable(table);
     }
 
     public int getId() {
@@ -85,14 +91,32 @@ public class Order {
         this.paid = paid;
     }
 
-    public int getTableId() {
-        return tableId;
+    public RestaurantTable getTable() {
+        return table;
     }
 
-    public void setTableId(int tableId) {
-        if (tableId <= 0) {
-            throw new IllegalArgumentException("Table id must be positive.");
+    public void setTable(RestaurantTable table) {
+        if (table == null) {
+            throw new IllegalArgumentException("Table is required.");
         }
-        this.tableId = tableId;
+        this.table = table;
+    }
+
+    public List<OrderLine> getOrderLines() {
+        return Collections.unmodifiableList(orderLines);
+    }
+
+    public void addOrderLine(OrderLine orderLine) {
+        if (orderLine == null) {
+            throw new IllegalArgumentException("Order line cannot be null.");
+        }
+        orderLines.add(orderLine);
+    }
+
+    public void removeOrderLine(OrderLine orderLine) {
+        if (orderLine == null) {
+            throw new IllegalArgumentException("Order line cannot be null.");
+        }
+        orderLines.remove(orderLine);
     }
 }

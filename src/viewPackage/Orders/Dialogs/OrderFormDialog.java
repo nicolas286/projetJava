@@ -1,4 +1,4 @@
-package viewPackage;
+package viewPackage.Orders.Dialogs;
 
 import controllerPackage.OrderController;
 import controllerPackage.TableController;
@@ -117,7 +117,7 @@ public class OrderFormDialog extends JDialog {
         statusComboBox.setSelectedItem(existingOrder.getStatus());
         paidCheckBox.setSelected(existingOrder.isPaid());
 
-        selectTableById(existingOrder.getTableId());
+        selectTableById(existingOrder.getTable().getId());
 
         if (existingOrder.getDateDelivered() != null) {
             dateDeliveredField.setText(existingOrder.getDateDelivered().toString());
@@ -161,10 +161,10 @@ public class OrderFormDialog extends JDialog {
 
             Order order;
             if (existingOrder == null) {
-                order = new Order(0, dateOrdered, dateCompleted, dateDelivered, status, isPaid, selectedTable.getId());
+                order = new Order(0, dateOrdered, dateCompleted, dateDelivered, status, isPaid, selectedTable);
                 orderController.addOrder(order);
             } else {
-                order = new Order(existingOrder.getId(), dateOrdered, dateCompleted, dateDelivered, status, isPaid, selectedTable.getId());
+                order = new Order(existingOrder.getId(), dateOrdered, dateCompleted, dateDelivered, status, isPaid, selectedTable);
                 orderController.updateOrder(order);
             }
 

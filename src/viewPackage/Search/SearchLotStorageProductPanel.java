@@ -1,25 +1,25 @@
-package viewPackage;
+package viewPackage.Search;
 
 import controllerPackage.SearchController;
 import exceptionPackage.BusinessException;
-import modelPackage.search.ProductCategoryConstraintSearchResult;
+import modelPackage.search.LotStorageProductSearchResult;
+import viewPackage.MainFrame;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
 
-public class SearchProductCategoryConstraintPanel extends JPanel {
+public class SearchLotStorageProductPanel extends JPanel {
 
     private final MainFrame parentFrame;
     private final SearchController searchController;
 
-    private JTextField productIdField;
-    private JTextField productNameField;
+    private JTextField lotIdField;
     private JTable resultTable;
     private DefaultTableModel tableModel;
 
-    public SearchProductCategoryConstraintPanel(MainFrame parentFrame) {
+    public SearchLotStorageProductPanel(MainFrame parentFrame) {
         this.parentFrame = parentFrame;
         this.searchController = new SearchController();
 
@@ -29,24 +29,19 @@ public class SearchProductCategoryConstraintPanel extends JPanel {
     private void buildInterface() {
         setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Search 2 - Product, Category and Constraints", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Search 3 - Lot, Storage and Products", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
 
         JPanel topPanel = new JPanel();
-        topPanel.add(new JLabel("Product Id:"));
-        productIdField = new JTextField(8);
-        topPanel.add(productIdField);
-
-        topPanel.add(new JLabel("Product Name:"));
-        productNameField = new JTextField(12);
-        topPanel.add(productNameField);
-
+        topPanel.add(new JLabel("Lot Id:"));
+        lotIdField = new JTextField(10);
         JButton searchButton = new JButton("Search");
         JButton backButton = new JButton("Back");
+        topPanel.add(lotIdField);
         topPanel.add(searchButton);
         topPanel.add(backButton);
 
-        String[] columns = {"Product Id", "Product Name", "Price", "Category", "Constraint"};
+        String[] columns = {"Lot Id", "Quantity", "Purchase Price", "Product Id", "Product Name", "Storage Id", "Refrigerated"};
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -67,32 +62,26 @@ public class SearchProductCategoryConstraintPanel extends JPanel {
 
     private void search() {
         try {
-            Integer productId = null;
-            if (!productIdField.getText().trim().isEmpty()) {
-                productId = Integer.parseInt(productIdField.getText().trim());
-            }
-
-            String productName = productNameField.getText().trim();
-
-            List<ProductCategoryConstraintSearchResult> results =
-                    searchController.searchProductCategoryConstraint(productId, productName);
+            int lotId = Integer.parseInt(lotIdField.getText().trim());
+            List<LotStorageProductSearchResult> results = searchController.searchLotStorageProduct(lotId);
 
             tableModel.setRowCount(0);
 
-            for (ProductCategoryConstraintSearchResult result : results) {
+            for (LotStorageProductSearchResult result : results) {
                 tableModel.addRow(new Object[]{
+                        result.getLotId(),
+                        result.getQuantity(),
+                        result.getPrice(),
                         result.getProductId(),
                         result.getProductName(),
-                        result.getProductPrice(),
-                        result.getCategoryName(),
-                        result.getConstraintName()
+                        result.getStorageId(),
+                        result.isRefrigerated()
                 });
             }
-
         } catch (BusinessException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Product id must be a valid integer.", "Validation error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Lot id must be a valid integer.", "Validation error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

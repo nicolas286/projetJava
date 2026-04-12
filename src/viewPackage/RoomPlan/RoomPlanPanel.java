@@ -1,8 +1,9 @@
-package viewPackage;
+package viewPackage.RoomPlan;
 
 import controllerPackage.TableController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.RestaurantTable;
+import viewPackage.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;

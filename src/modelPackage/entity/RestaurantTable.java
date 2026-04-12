@@ -6,14 +6,14 @@ public class RestaurantTable {
     private int id;
     private int positionX;
     private int positionY;
-    private Integer floor;
+    private int floor;
     private int capacity;
     private boolean active;
 
     public RestaurantTable() {
     }
 
-    public RestaurantTable(int id, int positionX, int positionY, Integer floor, int capacity, boolean active) {
+    public RestaurantTable(int id, int positionX, int positionY, int floor, int capacity, boolean active) {
         setId(id);
         setPositionX(positionX);
         setPositionY(positionY);
@@ -33,10 +33,6 @@ public class RestaurantTable {
         this.id = id;
     }
 
-    public int getPositionX() {
-        return positionX;
-    }
-
     public void setPositionX(int positionX) {
         if (positionX < 0) {
             throw new IllegalArgumentException("Position X must be non-negative.");
@@ -44,19 +40,11 @@ public class RestaurantTable {
         this.positionX = positionX;
     }
 
-    public int getPositionY() {
-        return positionY;
-    }
-
     public void setPositionY(int positionY) {
         if (positionY < 0) {
             throw new IllegalArgumentException("Position Y must be non-negative.");
         }
         this.positionY = positionY;
-    }
-
-    public Integer getFloor() {
-        return floor;
     }
 
     public void setFloor(Integer floor) {
@@ -88,17 +76,5 @@ public class RestaurantTable {
     @Override
     public String toString() {
         return "Table " + id + " (" + capacity + " seats)";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RestaurantTable that)) return false;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }

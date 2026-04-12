@@ -146,8 +146,7 @@ public class SearchDBAccess extends AbstractDataAccess implements SearchDataAcce
 
             return results;
         } catch (SQLException e) {
-            throw new DataAccessException("Error while searching product/category/constraint.", e);
-            // throw new DataAccessException("Error while searching product/category/constraint for productId " + productId + " and productName " + productName + ".", e);
+            throw new DataAccessException("Error while searching product/category/constraint for productId " + productId + " and productName " + productName + ".", e);
         }
     }
 
@@ -191,8 +190,7 @@ public class SearchDBAccess extends AbstractDataAccess implements SearchDataAcce
 
             return results;
         } catch (SQLException e) {
-            throw new DataAccessException("Error while searching lot/storage/product.", e);
-            // throw new DataAccessException("Error while searching lot/storage/product for lot id " + lotId + ".", e);
+            throw new DataAccessException("Error while searching lot/storage/product for lot id " + lotId + ".", e);
         }
     }
 }

@@ -1,25 +1,21 @@
 package modelPackage.entity;
 
-import java.util.Objects;
-
 public class OrderLine {
 
     private int number;
-    private int orderId;
+    private Product product;
     private String nameSnapshot;
     private double priceSnapshot;
-    private int productId;
     private int quantity;
 
     public OrderLine() {
     }
 
-    public OrderLine(int number, int orderId, String nameSnapshot, double priceSnapshot, int productId, int quantity) {
+    public OrderLine(int number, Product product, String nameSnapshot, double priceSnapshot, int quantity) {
         setNumber(number);
-        setOrderId(orderId);
+        setProduct(product);
         setNameSnapshot(nameSnapshot);
         setPriceSnapshot(priceSnapshot);
-        setProductId(productId);
         setQuantity(quantity);
     }
 
@@ -34,15 +30,15 @@ public class OrderLine {
         this.number = number;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setOrderId(int orderId) {
-        if (orderId <= 0) {
-            throw new IllegalArgumentException("Order id must be positive.");
+    public void setProduct(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product is required.");
         }
-        this.orderId = orderId;
+        this.product = product;
     }
 
     public String getNameSnapshot() {
@@ -67,17 +63,6 @@ public class OrderLine {
         this.priceSnapshot = priceSnapshot;
     }
 
-    public int getProductId() {
-        return productId;
-    }
-
-    public void setProductId(int productId) {
-        if (productId <= 0) {
-            throw new IllegalArgumentException("Product id must be positive.");
-        }
-        this.productId = productId;
-    }
-
     public int getQuantity() {
         return quantity;
     }
@@ -91,43 +76,5 @@ public class OrderLine {
 
     public double getLineTotal() {
         return priceSnapshot * quantity;
-    }
-
-    public static class OrderLineId {
-
-        private final int number;
-        private final int orderId;
-
-        public OrderLineId(int number, int orderId) {
-            if (number <= 0) {
-                throw new IllegalArgumentException("Line number must be positive.");
-            }
-            if (orderId <= 0) {
-                throw new IllegalArgumentException("Order id must be positive.");
-            }
-
-            this.number = number;
-            this.orderId = orderId;
-        }
-
-        public int getNumber() {
-            return number;
-        }
-
-        public int getOrderId() {
-            return orderId;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof OrderLineId that)) return false;
-            return number == that.number && orderId == that.orderId;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(number, orderId);
-        }
     }
 }

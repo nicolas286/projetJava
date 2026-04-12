@@ -1,4 +1,4 @@
-package viewPackage;
+package viewPackage.Home.Banner;
 
 import javax.swing.SwingUtilities;
 

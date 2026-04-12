@@ -33,8 +33,4 @@ public class TakeOrderLine {
         }
         this.quantity = quantity;
     }
-
-    public double getLineTotal() {
-        return product.getPrice() * quantity;
-    }
 }
