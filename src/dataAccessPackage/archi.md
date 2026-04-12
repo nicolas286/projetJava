@@ -20,6 +20,3 @@ dataAccessPackage/
 ├── core/
 │   ├── AbstractDAO.java
 │   └── DBConnection.java
-│
-└── id/
-    └── OrderLineId.java
