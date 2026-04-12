@@ -1,3 +1,5 @@
+// Ce fichier doit aller dans models et pas dataaccess
+
 package dataAccessPackage;
 
 import java.util.Objects;
