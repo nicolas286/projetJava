@@ -9,6 +9,7 @@ import java.sql.SQLException;
 Classe abstraite :
 - centralise l'accès à la connexion
 - évite la duplication de code dans les DAO
+- gère les exceptions
 */
 
 public abstract class AbstractDAO<T, ID> implements GenericDAO<T, ID> {
