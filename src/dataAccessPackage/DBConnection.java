@@ -32,9 +32,9 @@ public class DBConnection {
     /* Fermeture finale */
 
     public static void closeConnection() throws SQLException {
-    if (connection != null && !connection.isClosed()) {
-        connection.close();
-    }
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
     }
 
     private DBConnection() {} // Empêche l'instanciation de la classe (classe utilitaire)
