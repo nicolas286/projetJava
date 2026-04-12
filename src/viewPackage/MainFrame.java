@@ -2,6 +2,10 @@ package viewPackage;
 
 import controllerPackage.OrderController;
 import controllerPackage.TableController;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import dataAccessPackage.DBConnection;
+import java.sql.SQLException;
 
 import javax.swing.*;
 
@@ -19,6 +23,22 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1100, 700);
         setLocationRelativeTo(null);
+  
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    DBConnection.closeConnection();
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(
+                        null,
+                        "Erreur lors de la fermeture de la connexion à la base de données.",
+                        "Erreur",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+        });
 
         setContentPane(new HomePanel(this));
         setVisible(true);
