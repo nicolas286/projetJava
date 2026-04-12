@@ -1,11 +1,9 @@
-package dataAccessPackage;
+package dataAccessPackage.api;
 
 import exceptionPackage.DataAccessException;
 import modelPackage.Order;
 
 import java.util.List;
-
-/* Contrat spécifique aux commandes */
 
 public interface OrderDataAccess extends GenericDAO<Order, Integer> {
 

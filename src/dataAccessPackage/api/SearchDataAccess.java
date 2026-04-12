@@ -1,4 +1,4 @@
-package dataAccessPackage;
+package dataAccessPackage.api;
 
 import exceptionPackage.DataAccessException;
 import modelPackage.LotStorageProductSearchResult;

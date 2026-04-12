@@ -1,7 +1,7 @@
 package businessPackage;
 
-import dataAccessPackage.TableDBAccess;
-import dataAccessPackage.TableDataAccess;
+import dataAccessPackage.impl.TableDBAccess;
+import dataAccessPackage.api.TableDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
 import modelPackage.RestaurantTable;

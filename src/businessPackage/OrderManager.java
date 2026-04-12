@@ -1,7 +1,7 @@
 package businessPackage;
 
-import dataAccessPackage.OrderDBAccess;
-import dataAccessPackage.OrderDataAccess;
+import dataAccessPackage.impl.OrderDBAccess;
+import dataAccessPackage.api.OrderDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
 import modelPackage.Order;

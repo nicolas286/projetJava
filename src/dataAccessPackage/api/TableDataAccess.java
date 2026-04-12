@@ -1,4 +1,4 @@
-package dataAccessPackage;
+package dataAccessPackage.api;
 
 import modelPackage.RestaurantTable;
 

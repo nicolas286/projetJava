@@ -1,5 +1,8 @@
-package dataAccessPackage;
+package dataAccessPackage.impl;
 
+import dataAccessPackage.api.GenericDAO;
+import dataAccessPackage.api.TableDataAccess;
+import dataAccessPackage.core.AbstractDataAccess;
 import exceptionPackage.DataAccessException;
 import modelPackage.RestaurantTable;
 
@@ -9,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TableDBAccess extends AbstractDAO<RestaurantTable, Integer> implements TableDataAccess {
+public class TableDBAccess extends AbstractDataAccess implements TableDataAccess, GenericDAO<RestaurantTable, Integer> {
 
     @Override
     public void insert(RestaurantTable entity) throws DataAccessException {

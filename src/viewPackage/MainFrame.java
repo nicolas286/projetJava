@@ -4,7 +4,7 @@ import controllerPackage.OrderController;
 import controllerPackage.TableController;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import dataAccessPackage.DBConnection;
+import dataAccessPackage.core.DBConnection;
 import java.sql.SQLException;
 
 import javax.swing.*;

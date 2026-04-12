@@ -1,5 +1,8 @@
-package dataAccessPackage;
+package dataAccessPackage.impl;
 
+import dataAccessPackage.api.GenericDAO;
+import dataAccessPackage.api.ProductDataAccess;
+import dataAccessPackage.core.AbstractDataAccess;
 import exceptionPackage.DataAccessException;
 import modelPackage.Product;
 
@@ -10,7 +13,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDBAccess extends AbstractDAO<Product, Integer> implements ProductDataAccess {
+public class ProductDBAccess extends AbstractDataAccess implements ProductDataAccess, GenericDAO<Product, Integer> {
 
     @Override
     public void insert(Product entity) throws DataAccessException {

@@ -1,5 +1,8 @@
-package dataAccessPackage;
+package dataAccessPackage.impl;
 
+import dataAccessPackage.api.GenericDAO;
+import dataAccessPackage.api.OrderDataAccess;
+import dataAccessPackage.core.AbstractDataAccess;
 import exceptionPackage.DataAccessException;
 import modelPackage.Order;
 
@@ -13,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderDBAccess extends AbstractDAO<Order, Integer> implements OrderDataAccess {
+public class OrderDBAccess extends AbstractDataAccess implements OrderDataAccess, GenericDAO<Order, Integer> {
 
     @Override
     public void insert(Order order) throws DataAccessException {

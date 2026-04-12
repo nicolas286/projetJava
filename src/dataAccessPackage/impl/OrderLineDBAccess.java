@@ -1,5 +1,8 @@
-package dataAccessPackage;
+package dataAccessPackage.impl;
 
+import dataAccessPackage.api.GenericDAO;
+import dataAccessPackage.api.OrderLineDataAccess;
+import dataAccessPackage.core.AbstractDataAccess;
 import exceptionPackage.DataAccessException;
 import modelPackage.OrderLine;
 
@@ -9,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderLineDBAccess extends AbstractDAO<OrderLine, OrderLineId> implements OrderLineDataAccess {
+public class OrderLineDBAccess extends AbstractDataAccess implements OrderLineDataAccess, GenericDAO<OrderLine, OrderLine.OrderLineId> {
 
     @Override
     public void insert(OrderLine orderLine) throws DataAccessException {
@@ -53,7 +56,7 @@ public class OrderLineDBAccess extends AbstractDAO<OrderLine, OrderLineId> imple
     }
 
     @Override
-    public void delete(OrderLineId id) throws DataAccessException {
+    public void delete(OrderLine.OrderLineId id) throws DataAccessException {
         String sql = "DELETE FROM OrderLine WHERE number = ? AND `order` = ?";
 
         try (PreparedStatement statement = getConnection().prepareStatement(sql)) {
@@ -66,7 +69,7 @@ public class OrderLineDBAccess extends AbstractDAO<OrderLine, OrderLineId> imple
     }
 
     @Override
-    public OrderLine findById(OrderLineId id) throws DataAccessException {
+    public OrderLine findById(OrderLine.OrderLineId id) throws DataAccessException {
         String sql = """
                 SELECT number, `order`, nameSnapshot, priceSnapshot, product, quantity
                 FROM OrderLine

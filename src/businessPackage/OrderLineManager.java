@@ -1,8 +1,7 @@
 package businessPackage;
 
-import dataAccessPackage.OrderLineDBAccess;
-import dataAccessPackage.OrderLineDataAccess;
-import dataAccessPackage.OrderLineId;
+import dataAccessPackage.impl.OrderLineDBAccess;
+import dataAccessPackage.api.OrderLineDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
 import modelPackage.OrderLine;
@@ -42,7 +41,7 @@ public class OrderLineManager {
         }
 
         try {
-            return orderLineDataAccess.findById(new OrderLineId(number, orderId));
+            return orderLineDataAccess.findById(new OrderLine.OrderLineId(number, orderId));
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to retrieve order line.", e);
         }
@@ -90,7 +89,7 @@ public class OrderLineManager {
         }
 
         try {
-            orderLineDataAccess.delete(new OrderLineId(number, orderId));
+            orderLineDataAccess.delete(new OrderLine.OrderLineId(number, orderId));
         } catch (DataAccessException e) {
             throw new BusinessException("Unable to delete order line.", e);
         }

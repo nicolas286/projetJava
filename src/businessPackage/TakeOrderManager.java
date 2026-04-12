@@ -1,11 +1,11 @@
 package businessPackage;
 
-import dataAccessPackage.OrderDBAccess;
-import dataAccessPackage.OrderDataAccess;
-import dataAccessPackage.OrderLineDBAccess;
-import dataAccessPackage.OrderLineDataAccess;
-import dataAccessPackage.ProductDBAccess;
-import dataAccessPackage.ProductDataAccess;
+import dataAccessPackage.impl.OrderDBAccess;
+import dataAccessPackage.api.OrderDataAccess;
+import dataAccessPackage.impl.OrderLineDBAccess;
+import dataAccessPackage.api.OrderLineDataAccess;
+import dataAccessPackage.impl.ProductDBAccess;
+import dataAccessPackage.api.ProductDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
 import modelPackage.Order;

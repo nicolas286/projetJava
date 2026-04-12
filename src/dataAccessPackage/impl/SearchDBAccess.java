@@ -1,5 +1,7 @@
-package dataAccessPackage;
+package dataAccessPackage.impl;
 
+import dataAccessPackage.api.SearchDataAccess;
+import dataAccessPackage.core.AbstractDataAccess;
 import exceptionPackage.DataAccessException;
 import modelPackage.LotStorageProductSearchResult;
 import modelPackage.ProductCategoryConstraintSearchResult;
@@ -12,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchDBAccess extends AbstractDAO implements SearchDataAccess {
+public class SearchDBAccess extends AbstractDataAccess implements SearchDataAccess {
 
     @Override
     public List<TableOrderLineSearchResult> searchOrdersByTableId(int tableId) throws DataAccessException {

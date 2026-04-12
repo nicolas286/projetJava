@@ -1,7 +1,7 @@
 package businessPackage;
 
-import dataAccessPackage.SearchDBAccess;
-import dataAccessPackage.SearchDataAccess;
+import dataAccessPackage.impl.SearchDBAccess;
+import dataAccessPackage.api.SearchDataAccess;
 import exceptionPackage.BusinessException;
 import exceptionPackage.DataAccessException;
 import modelPackage.LotStorageProductSearchResult;
