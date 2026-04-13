@@ -4,68 +4,50 @@ import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.search.TableOrderLineSearchResult;
 import viewPackage.MainFrame;
+import viewPackage.Shared.Factories.DialogUtils;
+import viewPackage.Shared.Factories.LabelFactory;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.util.List;
 
-public class SearchOrdersByTablePanel extends JPanel {
-
-    private final MainFrame parentFrame;
-    private final RestaurantController restaurantController;
+public class SearchOrdersByTablePanel extends AbstractSearchPanel {
 
     private JTextField tableIdField;
-    private JTable resultTable;
-    private DefaultTableModel tableModel;
 
     public SearchOrdersByTablePanel(MainFrame parentFrame, RestaurantController restaurantController) {
-        this.parentFrame = parentFrame;
-        this.restaurantController = restaurantController;
-
-        buildInterface();
+        super(parentFrame, restaurantController);
     }
 
-    private void buildInterface() {
-        setLayout(new BorderLayout());
+    @Override
+    protected String getTitleText() {
+        return "Search 1 - Orders of a Table and Their Lines";
+    }
 
-        JLabel titleLabel = new JLabel("Search 1 - Orders of a Table and Their Lines", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-
-        JPanel topPanel = new JPanel();
-        topPanel.add(new JLabel("Table Id:"));
-        tableIdField = new JTextField(10);
-        JButton searchButton = new JButton("Search");
-        JButton backButton = new JButton("Back");
-        topPanel.add(tableIdField);
-        topPanel.add(searchButton);
-        topPanel.add(backButton);
-
-        String[] columns = {
+    @Override
+    protected String[] getColumnNames() {
+        return new String[]{
                 "Table Id", "Pos X", "Pos Y", "Floor", "Capacity", "Active",
                 "Order Id", "Date Ordered", "Date Completed", "Date Delivered", "Status",
                 "Line No", "Product Id", "Name Snapshot", "Price Snapshot", "Quantity"
         };
-
-        tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        resultTable = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(resultTable);
-
-        searchButton.addActionListener(e -> search());
-        backButton.addActionListener(e -> parentFrame.showHomeView());
-
-        add(titleLabel, BorderLayout.NORTH);
-        add(topPanel, BorderLayout.CENTER);
-        add(scrollPane, BorderLayout.SOUTH);
     }
 
-    private void search() {
+    @Override
+    protected JPanel buildSearchPanel() {
+        JPanel panel = new JPanel();
+
+        panel.add(LabelFactory.createFormLabel("Table Id:"));
+        tableIdField = new JTextField(10);
+        panel.add(tableIdField);
+
+        panel.add(createSearchButton());
+        panel.add(createBackButton());
+
+        return panel;
+    }
+
+    @Override
+    protected void search() {
         try {
             int tableId = Integer.parseInt(tableIdField.getText().trim());
             List<TableOrderLineSearchResult> results = restaurantController.searchOrdersByTableId(tableId);
@@ -93,9 +75,9 @@ public class SearchOrdersByTablePanel extends JPanel {
                 });
             }
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            DialogUtils.showError(this, e.getMessage());
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Table id must be a valid integer.", "Validation error", JOptionPane.ERROR_MESSAGE);
+            DialogUtils.showValidationError(this, "Table id must be a valid integer.");
         }
     }
 }

@@ -1,9 +1,11 @@
 package viewPackage.Orders.Dialogs;
 
-import controllerPackage.OrderController;
 import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.OrderLine;
+import viewPackage.Shared.Factories.ButtonFactory;
+import viewPackage.Shared.Factories.DialogUtils;
+import viewPackage.Shared.Factories.LabelFactory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -31,8 +33,7 @@ public class OrderLinesDialog extends JDialog {
         setLocationRelativeTo(getParent());
         setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Lines of order " + orderId, SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        JLabel titleLabel = LabelFactory.createTitleLabel("Lines of order " + orderId, 20);
 
         String[] columnNames = {"Line No", "Product Name", "Unit Price", "Product", "Quantity", "Line Total"};
         tableModel = new DefaultTableModel(columnNames, 0) {
@@ -45,15 +46,17 @@ public class OrderLinesDialog extends JDialog {
         linesTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(linesTable);
 
-        JButton closeButton = new JButton("Close");
-        closeButton.addActionListener(e -> dispose());
-
-        JPanel southPanel = new JPanel();
-        southPanel.add(closeButton);
+        JPanel southPanel = buildSouthPanel();
 
         add(titleLabel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         add(southPanel, BorderLayout.SOUTH);
+    }
+
+    private JPanel buildSouthPanel() {
+        JPanel panel = new JPanel();
+        panel.add(ButtonFactory.createPrimaryButton("Close", e -> dispose()));
+        return panel;
     }
 
     private void loadLines() {
@@ -73,12 +76,7 @@ public class OrderLinesDialog extends JDialog {
                 tableModel.addRow(row);
             }
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            DialogUtils.showError(this, e.getMessage());
         }
     }
 }

@@ -2,8 +2,8 @@ package viewPackage.Home;
 
 import viewPackage.Home.Banner.BannerPanel;
 import viewPackage.MainFrame;
-import viewPackage.Shared.ButtonFactory;
-import viewPackage.Shared.LabelFactory;
+import viewPackage.Shared.Factories.ButtonFactory;
+import viewPackage.Shared.Factories.LabelFactory;
 
 import javax.swing.*;
 import java.awt.*;

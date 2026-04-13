@@ -1,4 +1,4 @@
-package viewPackage.Shared;
+package viewPackage.Shared.Components;
 
 import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
@@ -6,6 +6,7 @@ import exceptionPackage.ValidationException;
 import modelPackage.entity.Product;
 import modelPackage.entity.RestaurantTable;
 import modelPackage.input.TakeOrderLine;
+import viewPackage.Shared.Factories.DialogUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -27,10 +28,6 @@ public class TakeOrderDialog extends JDialog {
 
     private final List<TakeOrderLine> lines;
 
-    public TakeOrderDialog(JFrame parent) {
-        this(parent, new RestaurantController());
-    }
-
     public TakeOrderDialog(JFrame parent, RestaurantController restaurantController) {
         super(parent, "Take Order", true);
         if (restaurantController == null) {
@@ -45,13 +42,6 @@ public class TakeOrderDialog extends JDialog {
         loadTables();
         loadProducts();
     }
-
-    public TakeOrderDialog(JFrame parent, RestaurantController restaurantController, RestaurantTable preselectedTable) {
-        this(parent, restaurantController);
-        selectTableById(preselectedTable.getId());
-        tableComboBox.setEnabled(false);
-    }
-
     private void buildInterface() {
         setSize(750, 500);
         setLocationRelativeTo(getParent());
@@ -62,7 +52,7 @@ public class TakeOrderDialog extends JDialog {
 
         tableComboBox = new JComboBox<>();
         productComboBox = new JComboBox<>();
-        quantitySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
+        quantitySpinner = createQuantitySpinner();
 
         formPanel.add(new JLabel("Table:"));
         formPanel.add(tableComboBox);
@@ -119,12 +109,7 @@ public class TakeOrderDialog extends JDialog {
             tableComboBox.setModel(comboBoxModel);
 
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            DialogUtils.showError(this, e.getMessage());
         }
     }
 
@@ -140,25 +125,19 @@ public class TakeOrderDialog extends JDialog {
             productComboBox.setModel(comboBoxModel);
 
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            DialogUtils.showError(this, e.getMessage());
         }
     }
 
-    private void selectTableById(int tableId) {
-        ComboBoxModel<RestaurantTable> model = tableComboBox.getModel();
+    private JSpinner createQuantitySpinner() {
+        JSpinner spinner = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
 
-        for (int i = 0; i < model.getSize(); i++) {
-            RestaurantTable table = model.getElementAt(i);
-            if (table.getId() == tableId) {
-                tableComboBox.setSelectedIndex(i);
-                return;
-            }
-        }
+        JFormattedTextField textField =
+                ((JSpinner.DefaultEditor) spinner.getEditor()).getTextField();
+        textField.setEditable(false);
+        textField.setFocusable(false);
+
+        return spinner;
     }
 
     private void addLine() {
@@ -166,12 +145,7 @@ public class TakeOrderDialog extends JDialog {
         int quantity = (Integer) quantitySpinner.getValue();
 
         if (selectedProduct == null) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Please select a product.",
-                    "Validation error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            DialogUtils.showValidationError(this, "Please select a product.");
             return;
         }
 
@@ -203,50 +177,25 @@ public class TakeOrderDialog extends JDialog {
             RestaurantTable selectedTable = (RestaurantTable) tableComboBox.getSelectedItem();
 
             if (selectedTable == null) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Please select a table.",
-                        "Validation error",
-                        JOptionPane.ERROR_MESSAGE
-                );
+                DialogUtils.showValidationError(this, "Please select a table.");
                 return;
             }
 
             if (lines.isEmpty()) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Please add at least one line.",
-                        "Validation error",
-                        JOptionPane.ERROR_MESSAGE
-                );
+                DialogUtils.showValidationError(this, "Please add at least one line.");
                 return;
             }
 
             restaurantController.takeOrder(selectedTable.getId(), lines);
 
             saved = true;
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Order created successfully.",
-                    "Success",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            DialogUtils.showInfo(this, "Order created successfully.");
             dispose();
 
         } catch (ValidationException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Validation error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            DialogUtils.showValidationError(this, e.getMessage());
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Business error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            DialogUtils.showError(this, e.getMessage());
         }
     }
 

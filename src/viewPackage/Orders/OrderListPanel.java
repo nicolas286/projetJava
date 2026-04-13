@@ -6,9 +6,10 @@ import modelPackage.entity.Order;
 import viewPackage.MainFrame;
 import viewPackage.Orders.Dialogs.OrderFormDialog;
 import viewPackage.Orders.Dialogs.OrderLinesDialog;
-import viewPackage.Shared.TakeOrderDialog;
-import viewPackage.Shared.ButtonFactory;
-import viewPackage.Shared.LabelFactory;
+import viewPackage.Shared.Factories.DialogUtils;
+import viewPackage.Shared.Components.TakeOrderDialog;
+import viewPackage.Shared.Factories.ButtonFactory;
+import viewPackage.Shared.Factories.LabelFactory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -84,7 +85,7 @@ public class OrderListPanel extends JPanel {
                 tableModel.addRow(row);
             }
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            DialogUtils.showError(this, e.getMessage());
         }
     }
 
@@ -92,7 +93,7 @@ public class OrderListPanel extends JPanel {
         int selectedRow = ordersTable.getSelectedRow();
 
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "Please select an order first.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            DialogUtils.showInfo(this, "Please select an order first.");
             return;
         }
 
@@ -107,7 +108,7 @@ public class OrderListPanel extends JPanel {
                 loadOrders();
             }
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            DialogUtils.showError(this, e.getMessage());
         }
     }
 
@@ -115,7 +116,7 @@ public class OrderListPanel extends JPanel {
         int selectedRow = ordersTable.getSelectedRow();
 
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "Please select an order first.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            DialogUtils.showInfo(this, "Please select an order first.");
             return;
         }
 

@@ -1,10 +1,12 @@
 package viewPackage.RoomPlan;
 
-import controllerPackage.OrderController;
 import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.RestaurantTable;
 import viewPackage.MainFrame;
+import viewPackage.Shared.Factories.ButtonFactory;
+import viewPackage.Shared.Factories.DialogUtils;
+import viewPackage.Shared.Factories.LabelFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,13 +15,11 @@ import java.util.List;
 public class RoomPlanPanel extends JPanel {
 
     private final MainFrame parentFrame;
-    private final OrderController orderController;
     private final RestaurantController restaurantController;
     private JPanel gridPanel;
 
-    public RoomPlanPanel(MainFrame parentFrame, OrderController orderController, RestaurantController restaurantController) {
+    public RoomPlanPanel(MainFrame parentFrame, RestaurantController restaurantController) {
         this.parentFrame = parentFrame;
-        this.orderController = orderController;
         this.restaurantController = restaurantController;
 
         buildInterface();
@@ -29,23 +29,24 @@ public class RoomPlanPanel extends JPanel {
     private void buildInterface() {
         setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Room Plan", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        JLabel titleLabel = LabelFactory.createTitleLabel("Room Plan");
 
         gridPanel = new JPanel(new GridLayout(0, 4, 15, 15));
         gridPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JScrollPane scrollPane = new JScrollPane(gridPanel);
 
-        JButton backButton = new JButton("Back to Home");
-        backButton.addActionListener(e -> parentFrame.showHomeView());
-
-        JPanel southPanel = new JPanel();
-        southPanel.add(backButton);
+        JPanel southPanel = buildSouthPanel();
 
         add(titleLabel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         add(southPanel, BorderLayout.SOUTH);
+    }
+
+    private JPanel buildSouthPanel() {
+        JPanel panel = new JPanel();
+        panel.add(ButtonFactory.createPrimaryButton("Back to Home", e -> parentFrame.showHomeView()));
+        return panel;
     }
 
     private void loadTables() {
@@ -54,36 +55,39 @@ public class RoomPlanPanel extends JPanel {
             gridPanel.removeAll();
 
             for (RestaurantTable table : tables) {
-                JButton tableButton = new JButton("<html><center>" +
-                        "Table " + table.getId() +
-                        "<br/>Capacity: " + table.getCapacity() +
-                        "<br/>" + (table.isActive() ? "Active" : "Inactive") +
-                        "</center></html>");
-
-                if (!table.isActive()) {
-                    tableButton.setEnabled(false);
-                } else {
-                    tableButton.addActionListener(e -> openTableOrders(table));
-                }
-
-                gridPanel.add(tableButton);
+                gridPanel.add(createTableButton(table));
             }
 
             gridPanel.revalidate();
             gridPanel.repaint();
 
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            DialogUtils.showError(this, e.getMessage());
         }
     }
 
+    private JButton createTableButton(RestaurantTable table) {
+        JButton button = ButtonFactory.createButton(buildTableButtonText(table));
+
+        if (!table.isActive()) {
+            button.setEnabled(false);
+        } else {
+            button.addActionListener(e -> openTableOrders(table));
+        }
+
+        return button;
+    }
+
+    private String buildTableButtonText(RestaurantTable table) {
+        return "<html><center>" +
+                "Table " + table.getId() +
+                "<br/>Capacity: " + table.getCapacity() +
+                "<br/>" + (table.isActive() ? "Active" : "Inactive") +
+                "</center></html>";
+    }
+
     private void openTableOrders(RestaurantTable table) {
-        TableOrdersDialog dialog = new TableOrdersDialog(parentFrame, table, orderController, restaurantController);
+        TableOrdersDialog dialog = new TableOrdersDialog(parentFrame, table, restaurantController);
         dialog.setVisible(true);
     }
 }

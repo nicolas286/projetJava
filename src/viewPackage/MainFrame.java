@@ -1,6 +1,5 @@
 package viewPackage;
 
-import controllerPackage.OrderController;
 import controllerPackage.RestaurantController;
 
 import java.awt.event.WindowAdapter;
@@ -12,6 +11,7 @@ import viewPackage.RoomPlan.RoomPlanPanel;
 import viewPackage.Search.SearchLotStorageProductPanel;
 import viewPackage.Search.SearchOrdersByTablePanel;
 import viewPackage.Search.SearchProductCategoryConstraintPanel;
+import viewPackage.Shared.Factories.DialogUtils;
 
 import java.sql.SQLException;
 
@@ -19,13 +19,11 @@ import javax.swing.*;
 
 public class MainFrame extends JFrame {
 
-    private final OrderController orderController;
     private final RestaurantController restaurantController;
 
     public MainFrame() {
         super("Cafe & Restaurant Management");
 
-        this.orderController = new OrderController();
         this.restaurantController = new RestaurantController();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,12 +36,7 @@ public class MainFrame extends JFrame {
                 try {
                     DBConnection.closeConnection();
                 } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(
-                        null,
-                        "Erreur lors de la fermeture de la connexion à la base de données.",
-                        "Erreur",
-                        JOptionPane.ERROR_MESSAGE
-                    );
+                    DialogUtils.showTechnicalError(null);
                 }
             }
         });
@@ -59,7 +52,7 @@ public class MainFrame extends JFrame {
     }
 
     public void showTablesView() {
-        setContentPane(new RoomPlanPanel(this, orderController, restaurantController));
+        setContentPane(new RoomPlanPanel(this, restaurantController));
         revalidate();
         repaint();
     }

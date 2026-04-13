@@ -4,69 +4,53 @@ import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.search.ProductCategoryConstraintSearchResult;
 import viewPackage.MainFrame;
+import viewPackage.Shared.Factories.DialogUtils;
+import viewPackage.Shared.Factories.LabelFactory;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.util.List;
 
-public class SearchProductCategoryConstraintPanel extends JPanel {
-
-    private final MainFrame parentFrame;
-    private final RestaurantController restaurantController;
+public class SearchProductCategoryConstraintPanel extends AbstractSearchPanel {
 
     private JTextField productIdField;
     private JTextField productNameField;
-    private JTable resultTable;
-    private DefaultTableModel tableModel;
 
     public SearchProductCategoryConstraintPanel(MainFrame parentFrame, RestaurantController restaurantController) {
-        this.parentFrame = parentFrame;
-        this.restaurantController = restaurantController;
-
-        buildInterface();
+        super(parentFrame, restaurantController);
     }
 
-    private void buildInterface() {
-        setLayout(new BorderLayout());
+    @Override
+    protected String getTitleText() {
+        return "Search 2 - Product, Category and Constraints";
+    }
 
-        JLabel titleLabel = new JLabel("Search 2 - Product, Category and Constraints", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-
-        JPanel topPanel = new JPanel();
-        topPanel.add(new JLabel("Product Id:"));
-        productIdField = new JTextField(8);
-        topPanel.add(productIdField);
-
-        topPanel.add(new JLabel("Product Name:"));
-        productNameField = new JTextField(12);
-        topPanel.add(productNameField);
-
-        JButton searchButton = new JButton("Search");
-        JButton backButton = new JButton("Back");
-        topPanel.add(searchButton);
-        topPanel.add(backButton);
-
-        String[] columns = {"Product Id", "Product Name", "Price", "Category", "Constraint"};
-        tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+    @Override
+    protected String[] getColumnNames() {
+        return new String[]{
+                "Product Id", "Product Name", "Price", "Category", "Constraint"
         };
-
-        resultTable = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(resultTable);
-
-        searchButton.addActionListener(e -> search());
-        backButton.addActionListener(e -> parentFrame.showHomeView());
-
-        add(titleLabel, BorderLayout.NORTH);
-        add(topPanel, BorderLayout.CENTER);
-        add(scrollPane, BorderLayout.SOUTH);
     }
 
-    private void search() {
+    @Override
+    protected JPanel buildSearchPanel() {
+        JPanel panel = new JPanel();
+
+        panel.add(LabelFactory.createFormLabel("Product Id:"));
+        productIdField = new JTextField(8);
+        panel.add(productIdField);
+
+        panel.add(LabelFactory.createFormLabel("Product Name:"));
+        productNameField = new JTextField(12);
+        panel.add(productNameField);
+
+        panel.add(createSearchButton());
+        panel.add(createBackButton());
+
+        return panel;
+    }
+
+    @Override
+    protected void search() {
         try {
             Integer productId = null;
             if (!productIdField.getText().trim().isEmpty()) {
@@ -91,9 +75,9 @@ public class SearchProductCategoryConstraintPanel extends JPanel {
             }
 
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            DialogUtils.showError(this, e.getMessage());
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Product id must be a valid integer.", "Validation error", JOptionPane.ERROR_MESSAGE);
+            DialogUtils.showValidationError(this, "Product id must be a valid integer.");
         }
     }
 }

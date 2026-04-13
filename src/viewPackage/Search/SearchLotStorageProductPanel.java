@@ -4,63 +4,49 @@ import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.search.LotStorageProductSearchResult;
 import viewPackage.MainFrame;
+import viewPackage.Shared.Factories.DialogUtils;
+import viewPackage.Shared.Factories.LabelFactory;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.util.List;
 
-public class SearchLotStorageProductPanel extends JPanel {
-
-    private final MainFrame parentFrame;
-    private final RestaurantController restaurantController;
+public class SearchLotStorageProductPanel extends AbstractSearchPanel {
 
     private JTextField lotIdField;
-    private JTable resultTable;
-    private DefaultTableModel tableModel;
 
     public SearchLotStorageProductPanel(MainFrame parentFrame, RestaurantController restaurantController) {
-        this.parentFrame = parentFrame;
-        this.restaurantController = restaurantController;
-
-        buildInterface();
+        super(parentFrame, restaurantController);
     }
 
-    private void buildInterface() {
-        setLayout(new BorderLayout());
+    @Override
+    protected String getTitleText() {
+        return "Search 3 - Lot, Storage and Products";
+    }
 
-        JLabel titleLabel = new JLabel("Search 3 - Lot, Storage and Products", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-
-        JPanel topPanel = new JPanel();
-        topPanel.add(new JLabel("Lot Id:"));
-        lotIdField = new JTextField(10);
-        JButton searchButton = new JButton("Search");
-        JButton backButton = new JButton("Back");
-        topPanel.add(lotIdField);
-        topPanel.add(searchButton);
-        topPanel.add(backButton);
-
-        String[] columns = {"Lot Id", "Quantity", "Purchase Price", "Product Id", "Product Name", "Storage Id", "Refrigerated"};
-        tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+    @Override
+    protected String[] getColumnNames() {
+        return new String[]{
+                "Lot Id", "Quantity", "Purchase Price", "Product Id",
+                "Product Name", "Storage Id", "Refrigerated"
         };
-
-        resultTable = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(resultTable);
-
-        searchButton.addActionListener(e -> search());
-        backButton.addActionListener(e -> parentFrame.showHomeView());
-
-        add(titleLabel, BorderLayout.NORTH);
-        add(topPanel, BorderLayout.CENTER);
-        add(scrollPane, BorderLayout.SOUTH);
     }
 
-    private void search() {
+    @Override
+    protected JPanel buildSearchPanel() {
+        JPanel panel = new JPanel();
+
+        panel.add(LabelFactory.createFormLabel("Lot Id:"));
+        lotIdField = new JTextField(10);
+        panel.add(lotIdField);
+
+        panel.add(createSearchButton());
+        panel.add(createBackButton());
+
+        return panel;
+    }
+
+    @Override
+    protected void search() {
         try {
             int lotId = Integer.parseInt(lotIdField.getText().trim());
             List<LotStorageProductSearchResult> results = restaurantController.searchLotStorageProduct(lotId);
@@ -79,9 +65,9 @@ public class SearchLotStorageProductPanel extends JPanel {
                 });
             }
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            DialogUtils.showError(this, e.getMessage());
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Lot id must be a valid integer.", "Validation error", JOptionPane.ERROR_MESSAGE);
+            DialogUtils.showValidationError(this, "Lot id must be a valid integer.");
         }
     }
 }

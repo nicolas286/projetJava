@@ -1,12 +1,14 @@
 package viewPackage.RoomPlan;
 
-import controllerPackage.OrderController;
 import controllerPackage.RestaurantController;
 import exceptionPackage.BusinessException;
 import modelPackage.entity.Order;
 import modelPackage.entity.RestaurantTable;
 import viewPackage.Orders.Dialogs.OrderLinesDialog;
-import viewPackage.Shared.TakeOrderDialog;
+import viewPackage.Shared.Factories.ButtonFactory;
+import viewPackage.Shared.Factories.DialogUtils;
+import viewPackage.Shared.Factories.LabelFactory;
+import viewPackage.Shared.Components.TakeOrderDialog;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -16,24 +18,21 @@ import java.util.List;
 public class TableOrdersDialog extends JDialog {
 
     private final RestaurantTable restaurantTable;
-    private final OrderController orderController;
     private final RestaurantController restaurantController;
     private JTable ordersTable;
     private DefaultTableModel tableModel;
 
     public TableOrdersDialog(JFrame parent,
                              RestaurantTable restaurantTable,
-                             OrderController orderController,
                              RestaurantController restaurantController) {
 
         super(parent, "Orders of " + restaurantTable, true);
 
-        if (orderController == null || restaurantController == null) {
-            throw new IllegalArgumentException("Controllers cannot be null.");
+        if (restaurantController == null) {
+            throw new IllegalArgumentException("RestaurantController cannot be null.");
         }
 
         this.restaurantTable = restaurantTable;
-        this.orderController = orderController;
         this.restaurantController = restaurantController;
 
         buildInterface();
@@ -45,8 +44,7 @@ public class TableOrdersDialog extends JDialog {
         setLocationRelativeTo(getParent());
         setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Orders of " + restaurantTable, SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        JLabel titleLabel = LabelFactory.createTitleLabel("Orders of " + restaurantTable, 20);
 
         String[] columnNames = {"Id", "Date Ordered", "Date Completed", "Status", "Date Delivered"};
         tableModel = new DefaultTableModel(columnNames, 0) {
@@ -59,22 +57,19 @@ public class TableOrdersDialog extends JDialog {
         ordersTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(ordersTable);
 
-        JButton takeOrderButton = new JButton("Take Order For This Table");
-        JButton viewLinesButton = new JButton("View Selected Order Lines");
-        JButton closeButton = new JButton("Close");
-
-        takeOrderButton.addActionListener(e -> openTakeOrderDialog());
-        viewLinesButton.addActionListener(e -> openSelectedOrderLines());
-        closeButton.addActionListener(e -> dispose());
-
-        JPanel southPanel = new JPanel();
-        southPanel.add(takeOrderButton);
-        southPanel.add(viewLinesButton);
-        southPanel.add(closeButton);
-
         add(titleLabel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
-        add(southPanel, BorderLayout.SOUTH);
+        add(buildSouthPanel(), BorderLayout.SOUTH);
+    }
+
+    private JPanel buildSouthPanel() {
+        JPanel panel = new JPanel();
+
+        panel.add(ButtonFactory.createPrimaryButton("Take Order For This Table", e -> openTakeOrderDialog()));
+        panel.add(ButtonFactory.createPrimaryButton("View Selected Order Lines", e -> openSelectedOrderLines()));
+        panel.add(ButtonFactory.createPrimaryButton("Close", e -> dispose()));
+
+        return panel;
     }
 
     private void loadOrders() {
@@ -93,12 +88,7 @@ public class TableOrdersDialog extends JDialog {
                 tableModel.addRow(row);
             }
         } catch (BusinessException e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+            DialogUtils.showError(this, e.getMessage());
         }
     }
 
@@ -115,12 +105,7 @@ public class TableOrdersDialog extends JDialog {
         int selectedRow = ordersTable.getSelectedRow();
 
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Please select an order first.",
-                    "Information",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            DialogUtils.showInfo(this, "Please select an order first.");
             return;
         }
 
