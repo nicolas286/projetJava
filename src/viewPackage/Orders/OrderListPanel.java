@@ -7,6 +7,8 @@ import viewPackage.MainFrame;
 import viewPackage.Orders.Dialogs.OrderFormDialog;
 import viewPackage.Orders.Dialogs.OrderLinesDialog;
 import viewPackage.Shared.TakeOrderDialog;
+import viewPackage.Shared.ButtonFactory;
+import viewPackage.Shared.LabelFactory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -31,8 +33,7 @@ public class OrderListPanel extends JPanel {
     private void buildInterface() {
         setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Orders", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        JLabel titleLabel = LabelFactory.createTitleLabel("Orders");
 
         String[] columnNames = {"Id", "Date Ordered", "Date Completed", "Status", "Paid", "Table", "Date Delivered"};
         tableModel = new DefaultTableModel(columnNames, 0) {
@@ -45,31 +46,24 @@ public class OrderListPanel extends JPanel {
         ordersTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(ordersTable);
 
-        JButton editButton = new JButton("Edit Selected");
-        JButton deleteButton = new JButton("Delete Selected");
-        JButton takeOrderButton = new JButton("Take Order");
-        JButton viewLinesButton = new JButton("View Selected Order Lines");
-        JButton refreshButton = new JButton("Refresh");
-        JButton backButton = new JButton("Back to Home");
-
-        editButton.addActionListener(e -> openEditDialog());
-        deleteButton.addActionListener(e -> deleteSelectedOrder());
-        takeOrderButton.addActionListener(e -> openTakeOrderDialog());
-        viewLinesButton.addActionListener(e -> openSelectedOrderLines());
-        refreshButton.addActionListener(e -> loadOrders());
-        backButton.addActionListener(e -> parentFrame.showHomeView());
-
-        JPanel southPanel = new JPanel();
-        southPanel.add(editButton);
-        southPanel.add(deleteButton);
-        southPanel.add(takeOrderButton);
-        southPanel.add(viewLinesButton);
-        southPanel.add(refreshButton);
-        southPanel.add(backButton);
+        JPanel southPanel = buildSouthPanel();
 
         add(titleLabel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         add(southPanel, BorderLayout.SOUTH);
+    }
+
+    private JPanel buildSouthPanel() {
+        JPanel panel = new JPanel();
+
+        panel.add(ButtonFactory.createPrimaryButton("Edit Selected", e -> openEditDialog()));
+        panel.add(ButtonFactory.createPrimaryButton("Delete Selected", e -> deleteSelectedOrder()));
+        panel.add(ButtonFactory.createPrimaryButton("Take Order", e -> openTakeOrderDialog()));
+        panel.add(ButtonFactory.createPrimaryButton("View Selected Order Lines", e -> openSelectedOrderLines()));
+        panel.add(ButtonFactory.createPrimaryButton("Refresh", e -> loadOrders()));
+        panel.add(ButtonFactory.createPrimaryButton("Back to Home", e -> parentFrame.showHomeView()));
+
+        return panel;
     }
 
     private void loadOrders() {
