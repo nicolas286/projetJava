@@ -1,0 +1,164 @@
+package viewPackage.Orders;
+
+import controllerPackage.RestaurantController;
+import exceptionPackage.BusinessException;
+import modelPackage.entity.Order;
+import viewPackage.MainFrame;
+import viewPackage.Orders.Dialogs.OrderFormDialog;
+import viewPackage.Orders.Dialogs.OrderLinesDialog;
+import viewPackage.Shared.Factories.DialogUtils;
+import viewPackage.Shared.Components.TakeOrderDialog;
+import viewPackage.Shared.Factories.ButtonFactory;
+import viewPackage.Shared.Factories.LabelFactory;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
+
+public class OrderListPanel extends JPanel {
+
+    private final MainFrame parentFrame;
+    private final RestaurantController restaurantController;
+    private JTable ordersTable;
+    private DefaultTableModel tableModel;
+
+    public OrderListPanel(MainFrame parentFrame, RestaurantController restaurantController) {
+        this.parentFrame = parentFrame;
+        this.restaurantController = restaurantController;
+
+        buildInterface();
+        loadOrders();
+    }
+
+    private void buildInterface() {
+        setLayout(new BorderLayout());
+
+        JLabel titleLabel = LabelFactory.createTitleLabel("Orders");
+
+        String[] columnNames = {"Id", "Date Ordered", "Date Completed", "Status", "Paid", "Table", "Date Delivered"};
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        ordersTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(ordersTable);
+
+        JPanel southPanel = buildSouthPanel();
+
+        add(titleLabel, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
+        add(southPanel, BorderLayout.SOUTH);
+    }
+
+    private JPanel buildSouthPanel() {
+        JPanel panel = new JPanel();
+
+        panel.add(ButtonFactory.createPrimaryButton("Edit Selected", e -> openEditDialog()));
+        panel.add(ButtonFactory.createPrimaryButton("Delete Selected", e -> deleteSelectedOrder()));
+        panel.add(ButtonFactory.createPrimaryButton("Take Order", e -> openTakeOrderDialog()));
+        panel.add(ButtonFactory.createPrimaryButton("View Selected Order Lines", e -> openSelectedOrderLines()));
+        panel.add(ButtonFactory.createPrimaryButton("Refresh", e -> loadOrders()));
+        panel.add(ButtonFactory.createPrimaryButton("Back to Home", e -> parentFrame.showHomeView()));
+
+        return panel;
+    }
+
+    private void loadOrders() {
+        try {
+            List<Order> orders = restaurantController.getAllOrders();
+            tableModel.setRowCount(0);
+
+            for (Order order : orders) {
+                Object[] row = {
+                        order.getId(),
+                        order.getDateOrdered(),
+                        order.getDateCompleted(),
+                        order.getStatus(),
+                        order.isPaid(),
+                        order.getTable(),
+                        order.getDateDelivered()
+                };
+                tableModel.addRow(row);
+            }
+        } catch (BusinessException e) {
+            DialogUtils.showError(this, e.getMessage());
+        }
+    }
+
+    private void openEditDialog() {
+        int selectedRow = ordersTable.getSelectedRow();
+
+        if (selectedRow < 0) {
+            DialogUtils.showInfo(this, "Please select an order first.");
+            return;
+        }
+
+        try {
+            int orderId = (Integer) tableModel.getValueAt(selectedRow, 0);
+            Order order = restaurantController.getOrderById(orderId);
+
+            OrderFormDialog dialog = new OrderFormDialog(parentFrame, restaurantController, order);
+            dialog.setVisible(true);
+
+            if (dialog.isSaved()) {
+                loadOrders();
+            }
+        } catch (BusinessException e) {
+            DialogUtils.showError(this, e.getMessage());
+        }
+    }
+
+    private void deleteSelectedOrder() {
+        int selectedRow = ordersTable.getSelectedRow();
+
+        if (selectedRow < 0) {
+            DialogUtils.showInfo(this, "Please select an order first.");
+            return;
+        }
+
+        int orderId = (Integer) tableModel.getValueAt(selectedRow, 0);
+
+        int choice = JOptionPane.showConfirmDialog(
+                this,
+                "Delete order " + orderId + " ?",
+                "Confirmation",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (choice == JOptionPane.YES_OPTION) {
+            try {
+                restaurantController.deleteOrder(orderId);
+                loadOrders();
+            } catch (BusinessException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void openTakeOrderDialog() {
+        TakeOrderDialog dialog = new TakeOrderDialog(parentFrame, restaurantController);
+        dialog.setVisible(true);
+
+        if (dialog.isSaved()) {
+            loadOrders();
+        }
+    }
+
+    private void openSelectedOrderLines() {
+        int selectedRow = ordersTable.getSelectedRow();
+
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, "Please select an order first.", "Information", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        int orderId = (Integer) tableModel.getValueAt(selectedRow, 0);
+
+        OrderLinesDialog dialog = new OrderLinesDialog(parentFrame, orderId, restaurantController);
+        dialog.setVisible(true);
+    }
+}
