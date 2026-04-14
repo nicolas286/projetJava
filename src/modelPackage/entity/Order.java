@@ -18,13 +18,8 @@ public class Order {
     private RestaurantTable table;
     private final List<OrderLine> orderLines;
 
-    public Order() {
-        this.orderLines = new ArrayList<>();
-    }
-
     public Order(int id, LocalDateTime dateOrdered, LocalDateTime dateCompleted,
                  LocalDateTime dateDelivered, OrderStatus status, boolean paid, RestaurantTable table) {
-        this();
         setId(id);
         setDateOrdered(dateOrdered);
         setDateCompleted(dateCompleted);
@@ -32,6 +27,7 @@ public class Order {
         setStatus(status);
         setPaid(paid);
         setTable(table);
+        this.orderLines = new ArrayList<>();
     }
 
     public int getId() {

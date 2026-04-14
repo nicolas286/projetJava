@@ -44,7 +44,7 @@ public class OrderDBAccess extends AbstractDataAccess implements OrderDataAccess
         Connection connection = getConnection();
 
         try {
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(false); // Empêcher l'envoi immédiat de chaque requête
 
             try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 fillOrderStatement(statement, order, false);
@@ -52,18 +52,18 @@ public class OrderDBAccess extends AbstractDataAccess implements OrderDataAccess
 
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        order.setId(generatedKeys.getInt(1));
+                        order.setId(generatedKeys.getInt(1)); // On récupère l'id généré par la DB
                     } else {
                         throw new DataAccessException("No generated id returned for inserted order.");
                     }
                 }
             }
 
-            insertOrderLines(order, connection);
+            insertOrderLines(order, connection); // On a un order complet avec id pour insérer les lignes
             connection.commit();
 
         } catch (SQLException e) {
-            rollbackQuietly(connection, e);
+            rollbackQuietly(connection, e); // Si ça plante, on annule (rollback transaction)
             throw new DataAccessException("Error while inserting order.", e);
         } finally {
             restoreAutoCommit(connection);
@@ -84,12 +84,12 @@ public class OrderDBAccess extends AbstractDataAccess implements OrderDataAccess
             connection.setAutoCommit(false);
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                fillOrderStatement(statement, order, true);
+                fillOrderStatement(statement, order, true); // Ici on a déjà l'id puisque update, on l'inclut pour le WHERE
                 statement.executeUpdate();
             }
 
             deleteOrderLines(order.getId(), connection);
-            insertOrderLines(order, connection);
+            insertOrderLines(order, connection); // Reset des lignes avec les nouvelles éventuelles
             connection.commit();
 
         } catch (SQLException e) {
@@ -189,15 +189,15 @@ public class OrderDBAccess extends AbstractDataAccess implements OrderDataAccess
         setNullableTimestamp(statement, 6, order.getDateDelivered());
 
         if (includeId) {
-            statement.setInt(7, order.getId());
+            statement.setInt(7, order.getId()); // Inclusion de l'id en param 7 pour update
         }
     }
 
     private void setNullableTimestamp(PreparedStatement statement, int index, LocalDateTime value) throws SQLException {
         if (value != null) {
-            statement.setTimestamp(index, Timestamp.valueOf(value));
+            statement.setTimestamp(index, Timestamp.valueOf(value)); // Conversion LocalDateTime => Timestamp pour DB
         } else {
-            statement.setNull(index, Types.TIMESTAMP);
+            statement.setNull(index, Types.TIMESTAMP); // NULL en DB
         }
     }
 
@@ -211,6 +211,27 @@ public class OrderDBAccess extends AbstractDataAccess implements OrderDataAccess
         }
 
         return orders;
+    }
+
+    private Order mapOrder(ResultSet resultSet) throws SQLException {
+        RestaurantTable table = new RestaurantTable(
+                resultSet.getInt("table_id"),
+                resultSet.getInt("positionX"),
+                resultSet.getInt("positionY"),
+                (Integer) resultSet.getObject("floor"),
+                resultSet.getInt("capacity"),
+                resultSet.getBoolean("isActive")
+        );
+
+        return new Order(
+                resultSet.getInt("id"),
+                resultSet.getTimestamp("dateOrdered").toLocalDateTime(),
+                getNullableDateTime(resultSet, "dateCompleted"),
+                getNullableDateTime(resultSet, "dateDelivered"),
+                OrderStatus.valueOf(resultSet.getString("status")),
+                resultSet.getBoolean("isPaid"),
+                table
+        );
     }
 
     private void insertOrderLines(Order order, Connection connection) throws SQLException {
@@ -273,26 +294,7 @@ public class OrderDBAccess extends AbstractDataAccess implements OrderDataAccess
         }
     }
 
-    private Order mapOrder(ResultSet resultSet) throws SQLException {
-        RestaurantTable table = new RestaurantTable(
-                resultSet.getInt("table_id"),
-                resultSet.getInt("positionX"),
-                resultSet.getInt("positionY"),
-                (Integer) resultSet.getObject("floor"),
-                resultSet.getInt("capacity"),
-                resultSet.getBoolean("isActive")
-        );
 
-        return new Order(
-                resultSet.getInt("id"),
-                resultSet.getTimestamp("dateOrdered").toLocalDateTime(),
-                getNullableDateTime(resultSet, "dateCompleted"),
-                getNullableDateTime(resultSet, "dateDelivered"),
-                OrderStatus.valueOf(resultSet.getString("status")),
-                resultSet.getBoolean("isPaid"),
-                table
-        );
-    }
 
     private OrderLine mapOrderLine(ResultSet resultSet) throws SQLException {
         Product product = new Product(
