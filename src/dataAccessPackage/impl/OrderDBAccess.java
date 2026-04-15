@@ -81,7 +81,7 @@ public class OrderDBAccess extends AbstractDataAccess implements OrderDataAccess
         Connection connection = getConnection();
 
         try {
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(false); // Pas de commit auto pour permettre transaction
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 fillOrderStatement(statement, order, true); // Ici on a déjà l'id puisque update, on l'inclut pour le WHERE

@@ -52,16 +52,6 @@ public class OrderManager {
         }
     }
 
-    public void addOrder(Order order) throws BusinessException, ValidationException {
-        validateOrder(order);
-
-        try {
-            orderDataAccess.insert(order);
-        } catch (DataAccessException e) {
-            throw new BusinessException("Unable to add order.", e);
-        }
-    }
-
     public void updateOrder(Order order) throws BusinessException, ValidationException {
         validateOrder(order);
 
@@ -100,68 +90,10 @@ public class OrderManager {
         }
     }
 
-    // -------------------- ORDER LINES --------------------
-
     public List<OrderLine> getOrderLinesByOrderId(int orderId) throws BusinessException {
         return getOrderById(orderId).getOrderLines();
     }
 
-    public OrderLine getOrderLineByNumber(int orderId, int lineNumber) throws BusinessException {
-        if (lineNumber <= 0) {
-            throw new BusinessException("Line number must be positive.");
-        }
-
-        Order order = getOrderById(orderId);
-
-        for (OrderLine line : order.getOrderLines()) {
-            if (line.getNumber() == lineNumber) {
-                return line;
-            }
-        }
-
-        return null;
-    }
-
-    public void addOrderLineToOrder(int orderId, OrderLine orderLine)
-            throws BusinessException, ValidationException {
-
-        if (orderLine == null) {
-            throw new ValidationException("Order line cannot be null.");
-        }
-
-        Order order = getOrderById(orderId);
-
-        order.addOrderLine(orderLine);
-        updateOrder(order);
-    }
-
-    public void removeOrderLineFromOrder(int orderId, int lineNumber)
-            throws BusinessException, ValidationException {
-
-        if (lineNumber <= 0) {
-            throw new BusinessException("Line number must be positive.");
-        }
-
-        Order order = getOrderById(orderId);
-
-        OrderLine toRemove = null;
-
-        for (OrderLine line : order.getOrderLines()) {
-            if (line.getNumber() == lineNumber) {
-                toRemove = line;
-                break;
-            }
-        }
-
-        if (toRemove == null) {
-            throw new BusinessException("Order line not found.");
-        }
-
-        order.removeOrderLine(toRemove);
-        updateOrder(order);
-    }
-
-    // -------------------- VALIDATION --------------------
 
     private void validateOrder(Order order) throws ValidationException {
         if (order == null) {

@@ -17,6 +17,8 @@ public class DBConnection {
     private static final String USER = "root";
     private static final String PASSWORD = "willylechat";
 
+    private DBConnection() {} // Empêche l'instanciation de la classe (classe utilitaire)
+
     /*
     Méthode publique :
     crée la connexion si elle n'existe pas encore
@@ -37,5 +39,4 @@ public class DBConnection {
         }
     }
 
-    private DBConnection() {} // Empêche l'instanciation de la classe (classe utilitaire)
 }
