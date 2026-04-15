@@ -8,9 +8,6 @@ public class OrderLine {
     private double priceSnapshot;
     private int quantity;
 
-    public OrderLine() {
-    }
-
     public OrderLine(int number, Product product, String nameSnapshot, double priceSnapshot, int quantity) {
         setNumber(number);
         setProduct(product);
@@ -25,7 +22,7 @@ public class OrderLine {
 
     public void setNumber(int number) {
         if (number <= 0) {
-            throw new IllegalArgumentException("Line number must be positive.");
+            throw new IllegalArgumentException("Line number  must be greater than 0.");
         }
         this.number = number;
     }
@@ -69,7 +66,7 @@ public class OrderLine {
 
     public void setQuantity(int quantity) {
         if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be positive.");
+            throw new IllegalArgumentException("Quantity  must be greater than 0.");
         }
         this.quantity = quantity;
     }

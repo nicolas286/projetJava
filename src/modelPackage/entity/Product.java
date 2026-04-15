@@ -7,9 +7,6 @@ public class Product {
     private double price;
     private int lotId;
 
-    public Product() {
-    }
-
     public Product(int id, String name, double price, int lotId) {
         setId(id);
         setName(name);
@@ -23,7 +20,7 @@ public class Product {
 
     public void setId(int id) {
         if (id <= 0) {
-            throw new IllegalArgumentException("Product id must be positive.");
+            throw new IllegalArgumentException("Product id must be greater than 0.");
         }
         this.id = id;
     }
@@ -56,7 +53,7 @@ public class Product {
 
     public void setLotId(int lotId) {
         if (lotId <= 0) {
-            throw new IllegalArgumentException("Lot id must be positive.");
+            throw new IllegalArgumentException("Lot id  must be greater than 0.");
         }
         this.lotId = lotId;
     }

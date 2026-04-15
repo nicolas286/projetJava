@@ -10,9 +10,6 @@ public class RestaurantTable {
     private int capacity;
     private boolean active;
 
-    public RestaurantTable() {
-    }
-
     public RestaurantTable(int id, int positionX, int positionY, int floor, int capacity, boolean active) {
         setId(id);
         setPositionX(positionX);
@@ -28,7 +25,7 @@ public class RestaurantTable {
 
     public void setId(int id) {
         if (id <= 0) {
-            throw new IllegalArgumentException("Table id must be positive.");
+            throw new IllegalArgumentException("Table id must be greater than 0.");
         }
         this.id = id;
     }
@@ -60,7 +57,7 @@ public class RestaurantTable {
 
     public void setCapacity(int capacity) {
         if (capacity <= 0) {
-            throw new IllegalArgumentException("Capacity must be positive.");
+            throw new IllegalArgumentException("Capacity must be greater than 0.");
         }
         this.capacity = capacity;
     }
